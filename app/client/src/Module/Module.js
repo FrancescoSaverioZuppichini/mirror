@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import Layer from './Layer/Layer';
+import List from '@material-ui/core/List';
 
 export default class Module extends Component {
     componentDidMount(){
@@ -11,9 +12,9 @@ export default class Module extends Component {
         var tree = this.props.module.state.tree
 
         return (
-        <div>
-            <Layer layer={tree}/>
-        </div>
+        <List>
+            <Layer layer={tree} deepth={1}/>
+        </List>
         )
     }
 }

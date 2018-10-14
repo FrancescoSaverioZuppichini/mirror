@@ -3,12 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@material-ui/core": "^3.2.0",
+    "@material-ui/icons": "^3.0.1",
     "axios": "^0.18.0",
     "create-react-app": "^2.0.3",
-    "material-ui": "^0.20.2",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
     "react-scripts": "2.0.4",
+    "reactstrap": "^6.5.0",
     "unstated": "^2.1.1"
   },
   "scripts": {
