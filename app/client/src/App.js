@@ -14,6 +14,8 @@ import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
 import { withStyles } from '@material-ui/core/styles';
 import LinearProgress from '@material-ui/core/LinearProgress';
+
+import LayerOutputs from './Module/LayerOutputs/LayerOutputs'
 const drawerWidth = 300;
 
 const styles = theme => ({
@@ -71,7 +73,7 @@ class App extends Component {
         <Subscribe to={[ModuleContainer]}>
           {module => (
             <div className={classes.root}>
-            <MyAppBar module={MyAppBar} {...this.props}/>
+              <MyAppBar module={MyAppBar} {...this.props} />
 
               <Drawer variant="permanent" classes={{
                 paper: classes.drawerPaper,
@@ -83,7 +85,9 @@ class App extends Component {
               {module.state.isLoading ? (<LinearProgress color="secondary" className={classes.progress} />) : ''}
 
               <main className={classes.content}>
-                diostronzo
+              <div className={classes.toolbar} />
+
+                <LayerOutputs module={module}/>
               </main>
 
             </div>

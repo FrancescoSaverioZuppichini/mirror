@@ -26,8 +26,9 @@ class Layer extends Component {
         open: false,
     }
 
-    handleClick = () => {
+    handleClick = (layer) => {
         this.setState(state => ({ open: !state.open }));
+        this.props.module.getLayerOutputs(layer.id)
     }
 
     renderLayer = (layer) => {
@@ -35,12 +36,12 @@ class Layer extends Component {
         const name = this.props.layer.name.split('(')[0]
 
         return (<List>
-            <ListItem button onClick={this.handleClick} >
+            <ListItem button onClick={() => this.handleClick(this.props.layer)} >
                 <ListItemText primary={name} />
                 {this.state.open ? <ExpandLess /> : <ExpandMore />}
             </ListItem>
             <Collapse in={this.state.open} timeout="auto" unmountOnExit>
-                {layer.children.map((el, i) => (<Layer layer={el} key={i} deepth={this.props.deepth + 1}>
+                {layer.children.map((el, i) => (<Layer layer={el} module={this.props.module} key={i} deepth={this.props.deepth + 1}>
                 </Layer>))}
             </Collapse>
         </List>

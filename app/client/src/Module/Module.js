@@ -13,7 +13,7 @@ export default class Module extends Component {
 
         return (
         <List>
-            <Layer layer={tree} deepth={1}/>
+            <Layer layer={tree} module={this.props.module} deepth={1}/>
         </List>
         )
     }

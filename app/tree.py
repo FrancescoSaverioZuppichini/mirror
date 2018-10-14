@@ -1,11 +1,12 @@
 from pprint import pprint
+import sys
 
 class Node:
     def __init__(self, p, v):
         self.p = p
         self.v = v
         self.c = []
-        self.id = hash(v)
+        self.id = str(hash(v) % ((sys.maxsize + 1) * 2))
         self.traced = []
 
     def __str__(self):
@@ -65,6 +66,11 @@ class Tracer:
         self.serialized = {}
         self.idx_to_value = {}
 
+    def register_forward_hooks(self, node):
+        node.v.register_forward_hook(node)
+        for c in node.c:
+            self.register_forward_hooks(c)
+
     def register_forward_hook(self, p, c):
         c.v.register_forward_hook(c)
 
@@ -72,15 +78,14 @@ class Tracer:
         #     leaf
         if len(node.c) == 0:
             self.operations.append(node.traced[0])
-        else:
-            for c in node.c:
-                self.get_operations(c)
+        for c in node.c:
+            self.get_operations(c)
 
 
     def __call__(self, input):
         build(self.root, self.module)
-        traverse(self.root, self.register_forward_hook)
-
+        # traverse(self.root, self.register_forward_hook)
+        self.register_forward_hooks(self.root)
         output = self.root.v(input)
 
         self.get_operations(self.root)
