@@ -64,10 +64,11 @@ def api_model_layer_output(id):
 
     # mode = request.args.get('mode')
     last = int(request.args['last'])
-    print(last)
     response = []
+    max = min((last + MAX_LINKS_EVERY_REQUEST), outputs.shape[1])
 
-    max = (last + MAX_LINKS_EVERY_REQUEST) % outputs.shape[1]
+    if last >= max:
+        return Response(status=404, response='No more.')
 
     response = ['/api/model/image/{}/{}'.format(id, i) for i in range(last, max)]
 

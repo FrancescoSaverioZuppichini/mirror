@@ -7,7 +7,7 @@ import querystring from 'querystring'
 class ModuleContainer extends Container {
     state = {
         tree: null,
-        isLoading: true,
+        isLoading: false,
         open: false,
         outputs: [],
         layerId: null,
@@ -29,13 +29,17 @@ class ModuleContainer extends Container {
     }
 
     getLayerOutputs = async (layerId) => {
-        const last = layerId != this.state.layerId ? 0 : this.state.last + 25 
-        console.log(last)
-        const res = await axios.get(api.getModuleLayerOutput(layerId, last), { params : { last }})
+        const isSameLayer = layerId == this.state.layerId
+        const last = isSameLayer ? this.state.last + 25 : 0
 
-        const outputs = res.data
+        await this.setState({ isLoading: true })
 
-        await this.setState({ outputs, layerId, last })
+        const res = await axios.get(api.getModuleLayerOutput(layerId, last), { params: { last } })
+
+        var outputs = isSameLayer ? this.state.outputs.concat(res.data) : res.data
+
+        console.log(outputs.length)
+        await this.setState({ outputs, layerId, last, isLoading: false })
 
     }
 }

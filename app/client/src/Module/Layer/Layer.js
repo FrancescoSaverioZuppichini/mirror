@@ -26,6 +26,23 @@ class Layer extends Component {
         open: false,
     }
 
+    componentDidMount() {
+        window.addEventListener('scroll', this.getMoreOnScrollBottom)
+    }
+
+    getMoreOnScrollBottom = () => {
+        const isCurrentLayer =  this.props.module.state.layerId == this.props.layer.id
+
+        if (window.scrollY == window.scrollMaxY && isCurrentLayer && !this.props.module.state.isLoading) {
+            console.log('DIOCANE')
+            this.props.module.getLayerOutputs(this.props.layer.id)
+        } 
+    }
+
+    componentWillUnmount() {
+        window.addEventListener('scroll', this.getMoreOnScrollBottom)
+    }
+
     handleClick = (layer) => {
         this.setState(state => ({ open: !state.open }));
         this.props.module.getLayerOutputs(layer.id)

@@ -65,7 +65,6 @@ function MyAppBar({ module, classes }) {
 
 class App extends Component {
 
-
   render() {
     const classes = this.props.classes
     return (
@@ -85,9 +84,9 @@ class App extends Component {
               {module.state.isLoading ? (<LinearProgress color="secondary" className={classes.progress} />) : ''}
 
               <main className={classes.content}>
-              <div className={classes.toolbar} />
+                <div className={classes.toolbar} />
 
-                <LayerOutputs module={module}/>
+                <LayerOutputs module={module} />
               </main>
 
             </div>
