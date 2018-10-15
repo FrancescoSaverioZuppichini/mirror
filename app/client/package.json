@@ -10,7 +10,8 @@
     "create-react-app": "^2.0.3",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
-    "react-scripts": "2.0.4",
+    "react-script": "^2.0.5",
+    "react-scripts": "^2.0.4",
     "reactstrap": "^6.5.0",
     "unstated": "^2.1.1"
   },

@@ -11,7 +11,8 @@ class ModuleContainer extends Container {
         open: false,
         outputs: [],
         layerId: null,
-        last: 0
+        last: 0,
+        settings: { size: 50 }
     }
 
     async getTree() {
@@ -28,19 +29,24 @@ class ModuleContainer extends Container {
 
     }
 
-    getLayerOutputs = async (layerId) => {
+    getLayerOutputs = async (layerId=this.state.layerId) => {
         const isSameLayer = layerId == this.state.layerId
-        const last = isSameLayer ? this.state.last + 25 : 0
+        const last = isSameLayer ? this.state.last + 64 : 0
+        try {
+            await this.setState({ isLoading: true })
 
-        await this.setState({ isLoading: true })
+            const res = await axios.get(api.getModuleLayerOutput(layerId, last), { params: { last } })
+    
+            var outputs = isSameLayer ? this.state.outputs.concat(res.data) : res.data
+    
+            await this.setState({ outputs, layerId, last, isLoading: false })
+        } catch {
+            await this.setState({ isLoading: false })
+        }
+    }
 
-        const res = await axios.get(api.getModuleLayerOutput(layerId, last), { params: { last } })
-
-        var outputs = isSameLayer ? this.state.outputs.concat(res.data) : res.data
-
-        console.log(outputs.length)
-        await this.setState({ outputs, layerId, last, isLoading: false })
-
+    changeSettings = async(settings) => {
+        await this.setState( { settings })
     }
 }
 

@@ -34,7 +34,6 @@ class Layer extends Component {
         const isCurrentLayer =  this.props.module.state.layerId == this.props.layer.id
 
         if (window.scrollY == window.scrollMaxY && isCurrentLayer && !this.props.module.state.isLoading) {
-            console.log('DIOCANE')
             this.props.module.getLayerOutputs(this.props.layer.id)
         } 
     }
