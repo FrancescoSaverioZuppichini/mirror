@@ -10,7 +10,7 @@ class ModuleContainer extends Container {
         isLoading: false,
         open: false,
         outputs: [],
-        layerId: null,
+        layer: { name : ''},
         last: 0,
         settings: { size: 50 }
     }
@@ -29,17 +29,17 @@ class ModuleContainer extends Container {
 
     }
 
-    getLayerOutputs = async (layerId=this.state.layerId) => {
-        const isSameLayer = layerId == this.state.layerId
+    getLayerOutputs = async (layer=this.state.layer) => {
+        const isSameLayer = layer.id == this.state.layer.id
         const last = isSameLayer ? this.state.last + 64 : 0
         try {
             await this.setState({ isLoading: true })
 
-            const res = await axios.get(api.getModuleLayerOutput(layerId, last), { params: { last } })
+            const res = await axios.get(api.getModuleLayerOutput(layer.id, last), { params: { last } })
     
             var outputs = isSameLayer ? this.state.outputs.concat(res.data) : res.data
     
-            await this.setState({ outputs, layerId, last, isLoading: false })
+            await this.setState({ outputs, layer, last, isLoading: false })
         } catch {
             await this.setState({ isLoading: false })
         }

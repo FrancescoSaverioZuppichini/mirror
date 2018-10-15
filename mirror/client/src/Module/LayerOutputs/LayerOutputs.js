@@ -4,6 +4,7 @@ import Grid from '@material-ui/core/Grid';
 
 import Slider from '@material-ui/lab/Slider';
 import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
 
 const Image = ({ src, size }) => {
     const style = {
@@ -27,10 +28,15 @@ class LayerOutputs extends React.Component {
                 <Grid
                     container
                     direction="row"
-                    justify="flex-start"
+                    justify="center"
                     alignItems="center"
-                    spacing={0}
+                    spacing={8}
                 >
+                    <Grid item xs={12}>
+                        <Typography variant="h6" gutterBottom style={{ textAlign: 'center' }}>
+                            {module.state.layer.name.split('(')[0]}
+                        </Typography>
+                    </Grid>
                     {module.state.outputs.map((link, i) =>
                         <Image src={link} {...module.state.settings} key={i}></Image>
                     )}

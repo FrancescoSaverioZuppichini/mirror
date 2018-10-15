@@ -44,7 +44,7 @@ class Layer extends Component {
 
     handleClick = (layer) => {
         this.setState(state => ({ open: !state.open }));
-        this.props.module.getLayerOutputs(layer.id)
+        this.props.module.getLayerOutputs(layer)
     }
 
     renderLayer = (layer) => {

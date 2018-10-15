@@ -7,8 +7,11 @@ import io
 
 def build(input, model, tracer):
     app = Flask(__name__)
-
     MAX_LINKS_EVERY_REQUEST = 64
+
+    @app.route('/')
+    def root():
+        return app.send_static_file('index.html')
 
     @app.route('/api/model', methods=['GET'])
     def api_model():
