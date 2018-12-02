@@ -1,6 +1,8 @@
 # Mirror
 ## Pytorch cnn visualisation
 
+![alt](https://raw.githubusercontent.com/FrancescoSaverioZuppichini/mirror/master/mirror/resources/mirror.gif)
+
 This is a beta.
 
 ### Getting started
@@ -34,7 +36,6 @@ mirror(input, model)
 
 It will automatic open a new tab in your browser
 
-![alt]()
 
 ### TODO
 - Support multiple inputs and cache them
