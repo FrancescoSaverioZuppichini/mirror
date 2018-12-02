@@ -1,9 +1,9 @@
 # Mirror
 ## Pytorch cnn visualisation
 
-![alt](https://raw.githubusercontent.com/FrancescoSaverioZuppichini/mirror/master/mirror/resources/mirror.gif)
+This is a raw beta so expect lots of things to change and improve over time.
 
-This is a beta.
+![alt](https://raw.githubusercontent.com/FrancescoSaverioZuppichini/mirror/master/mirror/resources/mirror.gif)
 
 ### Getting started
 
@@ -39,7 +39,7 @@ It will automatic open a new tab in your browser
 
 ### TODO
 - Support multiple inputs and cache them
-- Make a generic abstraction of a visualisation in order to add more
+- Make a generic abstraction of a visualisation in order to add more features 
 - Add all visualisation present here https://github.com/utkuozbulak/pytorch-cnn-visualizations
     * [Gradient visualization with vanilla backpropagation](#gradient-visualization)
     * [Gradient visualization with guided backpropagation](#gradient-visualization) [1]
