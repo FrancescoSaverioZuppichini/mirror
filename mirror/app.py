@@ -1,7 +1,7 @@
 import webbrowser
 
-from tree import Tracer
-from server import build
+from .tree import Tracer
+from .server import build
 
 def mirror(input, model):
     tracer = Tracer(module=model)
