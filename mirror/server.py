@@ -31,7 +31,7 @@ def build(input, model, tracer):
     @app.route('/api/model/layer/output/<id>')
     def api_model_layer_output(id):
         try:
-            model, inputs, outputs = tracer.idx_to_value[id].traced[0]
+            model, inputs, outputs = tracer.idx_to_value[id].traced
             if len(outputs.shape) < 3:  raise ValueError
             # mode = request.args.get('mode')
 
@@ -57,7 +57,7 @@ def build(input, model, tracer):
         output_id = int(output_id)
 
         try:
-            model, inputs, outputs = tracer.idx_to_value[layer_id].traced[0]
+            model, inputs, outputs = tracer.idx_to_value[layer_id].traced
 
             output = outputs[0][output_id]
             output = output.detach().numpy() * 255
