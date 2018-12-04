@@ -39,14 +39,13 @@ class Builder:
         def api_model_layer_output(id):
             try:
                 layer = tracer.idx_to_value[id].v
-                # model, inputs, outputs = tracer.idx_to_value[id].traced
-                # mode = request.args.get('mode')
+
                 self.output = weights_vis(input, layer)
 
                 print(self.output.shape)
                 outputs = self.output
 
-                if len(outputs.shape) < 3:  raise ValueError
+                if len(outputs.shape) < 4:  raise ValueError
 
                 last = int(request.args['last'])
                 max = min((last + MAX_LINKS_EVERY_REQUEST), outputs.shape[1])
@@ -59,7 +58,7 @@ class Builder:
             except KeyError:
                 response = Response(status=500, response='Index not found.')
             except ValueError:
-                response = Response(status=404, response='Outputs are not images.')
+                response = Response(status=404, response='Outputs must be an array of images')
             except StopIteration:
                 response = Response(status=404, response='No more.')
 
@@ -71,7 +70,7 @@ class Builder:
 
             try:
 
-                output = self.output [0][output_id]
+                output = self.outputs[0][output_id]
                 output = output.detach().numpy() * 255
 
                 pil_img = Image.fromarray(output)
