@@ -53,7 +53,7 @@ const styles = theme => ({
     zIndex: 9999
   },
 
-  settn: {
+  settings: {
     width: '300px !important'
 }
 })
@@ -79,6 +79,7 @@ class App extends Component {
     openSettings: false
 
   }
+
 
   toggleSettings = () => {
     const openSettings = !this.state.openSettings

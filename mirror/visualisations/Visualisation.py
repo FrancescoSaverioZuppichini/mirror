@@ -3,6 +3,18 @@ class Visualisation:
         self.module, self.tracer = module, tracer
         self.outputs = []
 
+    @property
+    def name(self):
+        return 'weights'
+
+    @property
+    def params(self):
+        return { 'lr' : { 'slider' : {'min' : 0.0001, 'max' : 1} }}
+
+    @property
+    def properties(self):
+        return { 'name' : self.name, 'params': self.params}
+
     def __call__(self, inputs, layer):
         """
         Do something with the inputs

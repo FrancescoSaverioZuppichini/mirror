@@ -1,17 +1,20 @@
 from flask import Flask, request, Response, send_file, jsonify
 from .visualisations import WeightsVisualisation
 from PIL import Image
+import json
 
 import io
 
 class Builder:
     def __init__(self):
         self.outputs = None
+        self.cache = {}
+        self.visualisations = {}
+        self.current_vis = None
 
     def build(self, input, model, tracer, visualisations=None):
 
-        # default_visualisation
-        weights_vis = WeightsVisualisation(model, tracer)
+        self.visualisations = { 'weights' :  WeightsVisualisation(model, tracer)}
         current_outputs = None
         app = Flask(__name__)
         MAX_LINKS_EVERY_REQUEST = 64
@@ -35,15 +38,43 @@ class Builder:
 
             return Response(response=name)
 
+        @app.route('/api/visualisation', methods=['GET'])
+        def api_visualisations():
+            serialised = [v.properties for v in self.visualisations.values()]
+
+            response = jsonify(serialised)
+
+            return response
+
+        @app.route('/api/visualisation', methods=['PUT'])
+        def api_visualisation():
+            data = json.loads(request.data.decode())
+
+            vis_key = data['name']
+
+            if vis_key not in self.visualisations:
+                response = Response(status=500, response='Visualisation {} not supported or does not exist'.format(vis_key))
+            else:
+                self.current_vis = self.visualisations[vis_key]
+                response = Response(status=200, response='Switched to {}'.format(vis_key))
+
+            return response
+
         @app.route('/api/model/layer/output/<id>')
         def api_model_layer_output(id):
             try:
                 layer = tracer.idx_to_value[id].v
 
-                self.output = weights_vis(input, layer)
+                if input not in self.cache: self.cache[input] = {}
 
-                print(self.output.shape)
-                outputs = self.output
+                cache = self.cache[input]
+
+                if layer not in cache: cache[layer] = self.current_vis(input, layer)
+                else: print('cached')
+                self.outputs = cache[layer]
+
+                print(self.outputs.shape)
+                outputs = self.outputs
 
                 if len(outputs.shape) < 4:  raise ValueError
 

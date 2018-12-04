@@ -7,6 +7,8 @@ import querystring from 'querystring'
 class ModuleContainer extends Container {
     state = {
         tree: null,
+        visualisations: [],
+        currentVisualisation: {},
         isLoading: false,
         open: false,
         outputs: [],
@@ -47,6 +49,27 @@ class ModuleContainer extends Container {
 
     changeSettings = async(settings) => {
         await this.setState( { settings })
+    }
+
+    async getVisualisations() {
+        await this.setState({ isLoading: true })
+
+        const res = await axios.get(api.GET_VISUALISATIONS)
+        const visualisations = res.data
+
+        await this.setState({ visualisations, isLoading: false })
+    }
+
+    async setVisualisationsSettings(data){
+
+        await this.setState({ isLoading: true })
+
+        const res = await axios.put(api.PUT_VISUALISATIONS, data)
+
+        const currentVisualisation = data
+
+        await this.setState({isLoading: false, currentVisualisation })
+
     }
 }
 

@@ -13,10 +13,49 @@ import ModuleContainer from '../ModuleContainer/ModuleContainer'
 import { Provider, Subscribe } from 'unstated';
 
 import Slider from '@material-ui/lab/Slider';
+import Radio from '@material-ui/core/Radio';
 
 import { withStyles } from '@material-ui/core/styles';
 
+class VisualisationSettings extends Component{
+    state = {
+        visualisation : null
+    }
+
+    componentDidMount(){
+        this.setState({visualisation: this.props.visualisation})
+    }
+
+    render(){
+        const { module, visualisation} = this.props
+        const { name, properties} = visualisation
+        
+        return (
+            <List>
+                <ListItem>
+                    <ListItemText>
+                    <div>{name}</div>
+                    <Radio
+                    checked={module.state.currentVisualisation.name === name}
+                    onChange={() => this.props.change(this.state.visualisation)}
+                    value="a"
+                    name="radio-button-demo"
+                    aria-label="A"
+                    />
+                    </ListItemText>
+                </ListItem>
+            </List>
+        )
+    }
+}
+
+
+
 class Settings extends Component {
+    componentDidMount(){
+        this.props.module.getVisualisations()
+    }
+
     handleSlider = (e, size) => {
         const { module } = this.props
         var settings = module.state.settings
@@ -24,6 +63,11 @@ class Settings extends Component {
         settings = Object.assign({}, settings, { size })
         console.log(settings)
         module.changeSettings(settings)
+    }
+
+    onVisualisationSettingsChange = (data) => {
+        console.log('di0ocane')
+        this.props.module.setVisualisationsSettings(data)
     }
 
     render() {
@@ -34,7 +78,6 @@ class Settings extends Component {
                 onClose={toogle}
             >
                 <div className={classes.toolbar} />
-
                 <List className={classes.settings}>
                     <ListItem>
                         <ListItemText>
@@ -43,7 +86,6 @@ class Settings extends Component {
 
                     </ListItem>
                     <ListItem>
-
                         <Slider
                             value={module.state.settings.size}
                             aria-labelledby="label"
@@ -52,10 +94,23 @@ class Settings extends Component {
                             step={1}
                             onChange={this.handleSlider}
                         />
-
                     </ListItem>
                 </List>
 
+                  <List className={classes.settings}>
+                  <ListItem>
+
+                  <ListItemText>
+                  <div>Visualisations</div>
+                        {this.props.module.state.visualisations.map((v,i)=> <VisualisationSettings 
+                        key={i}
+                        {...this.props} 
+                        visualisation={v} 
+                        change={this.onVisualisationSettingsChange}/>)}
+                  </ListItemText>
+                  </ListItem>
+
+                  </List>
             </Drawer>
         )
     }
