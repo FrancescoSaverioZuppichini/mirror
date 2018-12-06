@@ -1,9 +1,10 @@
+import json
+import io
+
 from flask import Flask, request, Response, send_file, jsonify
 from .visualisations import WeightsVisualisation
 from PIL import Image
-import json
-
-import io
+from collections import OrderedDict
 
 class Builder:
     def __init__(self):
@@ -13,9 +14,11 @@ class Builder:
         self.current_vis = None
 
     def build(self, input, model, tracer, visualisations=None):
+        self.visualisations = [WeightsVisualisation(model, tracer)]
 
-        self.visualisations = { 'weights' :  WeightsVisualisation(model, tracer)}
-        current_outputs = None
+        self.name2visualisations = { v.name : v for v in self.visualisations}
+        self.current_vis =  self.visualisations[0]
+
         app = Flask(__name__)
         MAX_LINKS_EVERY_REQUEST = 64
 
@@ -40,7 +43,7 @@ class Builder:
 
         @app.route('/api/visualisation', methods=['GET'])
         def api_visualisations():
-            serialised = [v.properties for v in self.visualisations.values()]
+            serialised = [v.properties for v in self.visualisations]
 
             response = jsonify(serialised)
 

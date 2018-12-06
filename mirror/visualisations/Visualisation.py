@@ -9,11 +9,14 @@ class Visualisation:
 
     @property
     def params(self):
-        return { 'lr' : { 'slider' : {'min' : 0.0001, 'max' : 1} }}
+        return [{ 'name' : 'lr',
+                  'params': [ { 'name' : 'slider',
+                              'params': { 'min': 0.0001, 'max': 1}} ]}
+                ]
 
     @property
     def properties(self):
-        return { 'name' : self.name, 'params': self.params}
+        return {'name': self.name, 'params': self.params}
 
     def __call__(self, inputs, layer):
         """
@@ -22,4 +25,3 @@ class Visualisation:
         :return:
         """
         pass
-
