@@ -55,11 +55,15 @@ class Builder:
 
             vis_key = data['name']
 
-            if vis_key not in self.visualisations:
+            if vis_key not in self.name2visualisations:
                 response = Response(status=500, response='Visualisation {} not supported or does not exist'.format(vis_key))
             else:
-                self.current_vis = self.visualisations[vis_key]
-                response = Response(status=200, response='Switched to {}'.format(vis_key))
+                print(data)
+                self.name2visualisations[vis_key].params = data
+                print(self.name2visualisations[vis_key].params)
+                self.current_vis = self.name2visualisations[vis_key]
+
+                response = jsonify(self.name2visualisations[vis_key].params)
 
             return response
 

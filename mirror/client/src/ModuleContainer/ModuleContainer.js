@@ -66,11 +66,24 @@ class ModuleContainer extends Container {
 
         const res = await axios.put(api.PUT_VISUALISATIONS, data)
 
-        const currentVisualisation = data
+        const currentVisualisation = res.data
+        var visualisations = [...this.state.visualisations]
 
-        await this.setState({isLoading: false, currentVisualisation })
+        console.log(visualisations)
+
+        for(let key in visualisations){
+            if(visualisations[key].name == currentVisualisation.name){
+                visualisations[key] = currentVisualisation
+            }
+        }
+
+        console.log(visualisations)
+
+        await this.setState({isLoading: false, currentVisualisation, visualisations })
 
     }
+
+
 }
 
 export default ModuleContainer
