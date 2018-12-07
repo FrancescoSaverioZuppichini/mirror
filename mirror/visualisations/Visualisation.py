@@ -13,7 +13,11 @@ class Visualisation:
         return []
 
     def init_properties(self):
-        return {}
+        return {'name': self.name,
+                'type': 'radio',
+                'value': False,
+                'params': self.params
+                }
 
     def __call__(self, inputs, layer):
         """

@@ -2,10 +2,11 @@ from mirror import mirror
 
 from PIL import Image
 
-from torchvision.models import resnet101
+from torchvision.models import resnet101, resnet18
 from torchvision.transforms import ToTensor, Resize, Compose
 
-model = resnet101(True)
+# model = resnet101(True)
+model = resnet18(True)
 
 cat = Image.open("cat.jpg")
 
