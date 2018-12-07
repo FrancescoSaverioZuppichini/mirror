@@ -9,6 +9,7 @@ class Visualisation:
     @property
     def name(self):
         pass
+
     def init_params(self):
         return []
 
