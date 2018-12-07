@@ -2,7 +2,7 @@ import json
 import io
 
 from flask import Flask, request, Response, send_file, jsonify
-from .visualisations import WeightsVisualisation
+from .visualisations import WeightsVisualisation, DummyVisualisation
 from PIL import Image
 from collections import OrderedDict
 
@@ -14,7 +14,7 @@ class Builder:
         self.current_vis = None
 
     def build(self, input, model, tracer, visualisations=None):
-        self.visualisations = [WeightsVisualisation(model, tracer)]
+        self.visualisations = [WeightsVisualisation(model, tracer), DummyVisualisation(model, tracer)]
 
         self.name2visualisations = { v.name : v for v in self.visualisations}
         self.current_vis =  self.visualisations[0]
@@ -71,14 +71,14 @@ class Builder:
         def api_model_layer_output(id):
             try:
                 layer = tracer.idx_to_value[id].v
+                print(self.current_vis)
+                if input not in self.current_vis.cache: self.current_vis.cache[input] = {}
+                # TODO need to cache for vis
+                layer_cache = self.current_vis.cache[input]
 
-                if input not in self.cache: self.cache[input] = {}
-
-                cache = self.cache[input]
-
-                if layer not in cache: cache[layer] = self.current_vis(input, layer)
+                if layer not in layer_cache: layer_cache[layer] = self.current_vis(input, layer)
                 else: print('cached')
-                self.outputs = cache[layer]
+                self.outputs = layer_cache[layer]
 
                 print(self.outputs.shape)
                 outputs = self.outputs
@@ -90,7 +90,7 @@ class Builder:
 
                 if last >= max: raise StopIteration
 
-                response = ['/api/model/image/{}/{}'.format(id, i) for i in range(last, max)]
+                response = ['/api/model/image/{}/{}/{}/{}'.format(hash(input), hash(self.current_vis), id, i) for i in range(last, max)]
                 response = jsonify(response)
 
             except KeyError:
@@ -102,8 +102,8 @@ class Builder:
 
             return response
 
-        @app.route('/api/model/image/<layer_id>/<output_id>')
-        def api_model_layer_output_image(layer_id, output_id):
+        @app.route('/api/model/image/<input_id>/<vis_id>/<layer_id>/<output_id>')
+        def api_model_layer_output_image(input_id, vis_id, layer_id, output_id):
             output_id = int(output_id)
 
             try:

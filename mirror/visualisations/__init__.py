@@ -1,1 +1,2 @@
 from .WeightsVisualisation import WeightsVisualisation
+from .DummyVisualisation import DummyVisualisation

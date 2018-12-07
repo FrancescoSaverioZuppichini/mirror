@@ -4,28 +4,16 @@ class Visualisation:
         self.outputs = []
         self.params = self.init_params()
         self.properties = self.init_properties()
-
+        self.cache = {}
 
     @property
     def name(self):
-        return 'weights'
-
+        pass
     def init_params(self):
-        return [{ 'name' : 'lr',
-                  'type' : 'slider',
-                  'min': 0,
-                  'max': 10,
-                  'value': 0,
-                  'params' : []
-                  }]
-
+        return []
 
     def init_properties(self):
-        return {'name': self.name,
-                'type': 'radio',
-                'value': False,
-                'params': self.params
-                }
+        return {}
 
     def __call__(self, inputs, layer):
         """

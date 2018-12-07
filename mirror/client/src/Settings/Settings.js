@@ -17,56 +17,8 @@ import Radio from '@material-ui/core/Radio';
 
 import { withStyles } from '@material-ui/core/styles';
 
-class VisualisationSettingsParam extends Component {
-    
-    
-    update = (param, params,  value) => {
-        console.log('update0', params)
-        console.log('update0', param)
-        var params = [{...params, value}]
-        var param = {...param, params}
-        console.log('update1', params)
-        console.log('update1', param)
-
-        this.props.update(this.props.param, param)
-    }
-
-    makeParam = (param) => {
-        console.log(param)
-        if(param.name == 'slider') {
-            var { max, min, value } = param.params[0]
-            return  <Slider
-                        value={value}
-                        aria-labelledby="label"
-                        min={min}
-                        max={max}
-                        step={0.1}
-                        onChange={(e, v) => this.update(param, param.params, 9)}
-                    />
-        }
-    }
-
-    render(){
-        console.log('param', this.props.param)
-        const { name, params} = this.props.param
-        return (
-            <List>
-                <ListItem>
-                    <ListItemText>
-                        <div>{name}</div>
-                    </ListItemText>
-                    {params.map(p => this.makeParam(p))}
-                </ListItem>
-            </List>
-        )
-    }
-}
 
 class VisualisationSettings extends Component{
-
-    componentDidMount(){
-        this.setState({visualisation: this.props.visualisation})
-    }
 
     update = (value) => {
         var visualisation = {...this.props.visualisation, ...value}
@@ -117,6 +69,38 @@ class VisualisationSettings extends Component{
     }
 }
 
+class VisualisationSettingsRoot extends Component {
+    update = (value) => {
+        var visualisation = {...this.props.visualisation, ...value}
+
+        this.props.module.setVisualisationsSettings(visualisation)
+        this.props.module.getLayerOutputs(this.props.module.state.layer, true)
+
+    }
+
+    render(){
+        const { module, visualisation} = this.props
+        const { name, params} = visualisation
+
+        return (
+            <List>
+                <ListItem>
+                    <ListItemText>
+                    <div>{name}</div>
+                    </ListItemText>
+                    <Radio
+                    checked={this.props.module.state.currentVisualisation.name == name}
+                    onChange={(e, v) => this.update({...visualisation, value:v }) }
+                    value="a"
+                    name="radio-button-demo"
+                    aria-label="A"
+                    />
+                </ListItem>
+                {params.map(p => (<VisualisationSettings visualisation={p} update={this.update}/>))}
+            </List>
+        )
+    }
+}
 
 
 class Settings extends Component {
@@ -161,7 +145,7 @@ class Settings extends Component {
 
                   <ListItemText>
                   <div>Visualisations</div>
-                        {this.props.module.state.visualisations.map((v,i)=> <VisualisationSettings 
+                        {this.props.module.state.visualisations.map((v,i)=> <VisualisationSettingsRoot 
                         key={i}
                         {...this.props} 
                         visualisation={v} 

@@ -17,3 +17,22 @@ class WeightsVisualisation(Visualisation):
 
         return self.layer2values[layer][1]
 
+    @property
+    def name(self):
+        return 'weights'
+
+    def init_params(self):
+        return [{'name': 'lr',
+                 'type': 'slider',
+                 'min': 0,
+                 'max': 10,
+                 'value': 0,
+                 'params': []
+                 }]
+
+    def init_properties(self):
+        return {'name': self.name,
+                'type': 'radio',
+                'value': False,
+                'params': self.params
+                }
