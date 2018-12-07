@@ -28,13 +28,13 @@ class VisualisationSettings extends Component{
 
     makeParam = (param) => {
         if(param.type == 'slider') {
-            var { max, min, value } = param
+            var { max, min, step, value } = param
             return  (<Slider
                         value={value}
                         aria-labelledby="label"
                         min={min}
                         max={max}
-                        step={0.1}
+                        step={step}
                         onChange={(e, v) => this.update({...param,  ...{value : v}}) }
                     />)
         }
@@ -112,6 +112,16 @@ class Settings extends Component {
         console.log('onVisualisationSettingsChange', data)
         this.props.module.setVisualisationsSettings(data.params[0])
     }
+
+    handleSlider = (e, size) => {
+        const { module } = this.props
+        var settings = module.state.settings
+
+        settings = Object.assign({}, settings, { size })
+
+        module.changeSettings(settings)
+    }
+
 
     render() {
         const { toogle, classes, open, module } = this.props

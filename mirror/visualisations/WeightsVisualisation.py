@@ -27,6 +27,7 @@ class WeightsVisualisation(Visualisation):
                  'min': 0,
                  'max': 10,
                  'value': 0,
+                 'step': 1,
                  'params': []
                  }]
 

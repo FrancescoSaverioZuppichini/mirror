@@ -41,7 +41,7 @@ class ModuleContainer extends Container {
             const res = await axios.get(api.getModuleLayerOutput(layer.id, last), { params: { last } })
     
             var outputs = isSameLayer ? this.state.outputs.concat(res.data) : res.data
-    
+            
             await this.setState({ outputs, layer, last, isLoading: false })
         } catch {
             await this.setState({ isLoading: false })
