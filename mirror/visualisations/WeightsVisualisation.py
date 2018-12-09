@@ -15,25 +15,15 @@ class WeightsVisualisation(Visualisation):
 
         if layer not in self.layer2values: self.module(inputs)
 
-        return self.layer2values[layer][1]
+        output = self.layer2values[layer][1]
+
+        b, c, h, w = output.shape
+
+        output = output.view(c, b, h, w)
+
+        return output
 
     @property
     def name(self):
         return 'weights'
 
-    def init_params(self):
-        return [{'name': 'lr',
-                 'type': 'slider',
-                 'min': 0,
-                 'max': 10,
-                 'value': 0,
-                 'step': 1,
-                 'params': []
-                 }]
-
-    def init_properties(self):
-        return {'name': self.name,
-                'type': 'radio',
-                'value': False,
-                'params': self.params
-                }

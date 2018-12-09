@@ -1,10 +1,12 @@
 import json
 import io
+import numpy as np
 
 from flask import Flask, request, Response, send_file, jsonify
 from .visualisations import WeightsVisualisation, DummyVisualisation
 from PIL import Image
-from collections import OrderedDict
+
+from torchvision.transforms import ToPILImage
 
 class Builder:
     def __init__(self):
@@ -79,13 +81,13 @@ class Builder:
                 else: print('cached')
                 self.outputs = layer_cache[layer]
 
-                print(self.outputs.shape)
                 outputs = self.outputs
+                print(self.outputs.shape)
 
-                if len(outputs.shape) < 4:  raise ValueError
+                if len(outputs.shape) < 3:  raise ValueError
 
                 last = int(request.args['last'])
-                max = min((last + MAX_LINKS_EVERY_REQUEST), outputs.shape[1])
+                max = min((last + MAX_LINKS_EVERY_REQUEST), outputs.shape[0])
 
                 if last >= max: raise StopIteration
 
@@ -107,11 +109,11 @@ class Builder:
 
             try:
 
-                output = self.outputs[0][output_id]
-                output = output.detach().numpy() * 255
+                output = self.outputs[output_id]
+                output = output.detach()
 
-                pil_img = Image.fromarray(output)
-                pil_img = pil_img.convert('L')
+                pil_img = ToPILImage()(output)
+
                 img_io = io.BytesIO()
                 pil_img.save(img_io, 'JPEG', quality=70)
                 img_io.seek(0)

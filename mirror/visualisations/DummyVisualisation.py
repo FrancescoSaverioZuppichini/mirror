@@ -3,7 +3,7 @@ from .Visualisation import Visualisation
 class DummyVisualisation(Visualisation):
 
     def __call__(self, inputs, layer):
-        return inputs.repeat(1, self.properties['params'][0]['value'], 1, 1)
+        return inputs.repeat(self.properties['params'][0]['value'],1, 1, 1)
 
     @property
     def name(self):

@@ -51,19 +51,26 @@ class VisualisationSettings extends Component{
     }
 
     render(){
-        const { module, visualisation} = this.props
+        const { classes, module, visualisation} = this.props
         const { name, params} = visualisation
         console.log('render', visualisation)
 
         return (
-            <List>
+            <List disablePadding>
                 <ListItem>
                     <ListItemText>
                     <div>{name}</div>
-                    </ListItemText>
+                    <div className={classes.sliders}>
                     {this.makeParam(visualisation)}
+                    </div>
+                    </ListItemText>
                 </ListItem>
-                {params.map(p => (<VisualisationSettings visualisation={p} update={this.update}/>))}
+                <ListItem>
+                {params.map(p => (<VisualisationSettings 
+                {...this.props}
+                visualisation={p} 
+                update={this.update}/>))}
+                </ListItem>
             </List>
         )
     }
@@ -96,7 +103,12 @@ class VisualisationSettingsRoot extends Component {
                     aria-label="A"
                     />
                 </ListItem>
-                {params.map(p => (<VisualisationSettings visualisation={p} update={this.update}/>))}
+                <ListItem>
+                    {params.map(p => (<VisualisationSettings 
+                    {...this.props}
+                    visualisation={p} 
+                    update={this.update}/>))}
+                </ListItem>
             </List>
         )
     }

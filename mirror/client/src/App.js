@@ -55,7 +55,11 @@ const styles = theme => ({
 
   settings: {
     width: '300px !important'
-}
+  },
+
+  sliders : {
+    width: '200px !important'
+  }
 })
 
 function MyAppBar({ module, classes }) {
