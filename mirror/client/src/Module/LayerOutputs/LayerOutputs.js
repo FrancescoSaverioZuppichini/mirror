@@ -6,25 +6,55 @@ import Slider from '@material-ui/lab/Slider';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 
+class AtomicImage  extends Component {
+    constructor(props) {
+         super(props);
+         this.state = {dimensions: {}};
+         this.onImgLoad = this.onImgLoad.bind(this);
+     }
+     onImgLoad({target:img}) {
+         this.setState({dimensions:{height:img.offsetHeight,
+                                    width:img.offsetWidth}});
+     }
+     render(){
+         const {src, size} = this.props;
+         const {width, height} = this.state.dimensions;
+        
+         const style = {
+            // backgroundImage : `url(${src})`,
+            // backgroundSize: 100% 100%,
+            height: `${height * size}px`,
+            width: `${width * size}px`
+        }
+
+        
+         return (
+                 <img onLoad={this.onImgLoad} src={src}/>
+                );
+     }
+ }
+
+
 const Image = ({ src, size }) => {
     const style = {
         // backgroundImage : `url(${src})`,
         // backgroundSize: 100% 100%,
-        height: `${100 * (size / 20)}px`,
-        width: `${100 * (size / 20)}px`
+        height: `${100 * (size / 10)}px`,
+        width: `${100 * (size / 10)}px`
     }
 
+
     return (<Grid item>
-        <img style={style} src={src}></img>
+        <img src={src} style={style} />
     </Grid>)
 }
 
 class LayerOutputs extends React.Component {
     render() {
-        const { module } = this.props
+        const { module, classes } = this.props
 
         return (
-            <div>
+            <div className={classes.layerss}>
                 <Grid
                     container
                     direction="row"

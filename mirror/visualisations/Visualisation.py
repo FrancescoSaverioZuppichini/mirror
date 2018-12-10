@@ -5,6 +5,7 @@ class Visualisation:
         self.params = self.init_params()
         self.properties = self.init_properties()
         self.cache = {}
+        self.name2properties = {p['name']: p for p in self.params}
 
     @property
     def name(self):

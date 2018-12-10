@@ -1,11 +1,4 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[16]:
-
-
-import os
-import cv2
+from .Visualisation import Visualisation
 
 import torch
 import torch.nn as nn
@@ -20,48 +13,16 @@ from skimage.util import view_as_blocks, view_as_windows, montage
 from torchvision import transforms
 import torchvision.transforms.functional as TF
 from PIL import Image, ImageFilter, ImageChops
-import matplotlib.pyplot as plt
-# In[26]:
 
 
-# IMG_PATH = '../pytorch-cnn-visualizations/input_images/dd_tree.jpg'
-# IMG_PATH = './resources/the_starry_night-wallpaper-1920x1200.jpg'
-IMG_PATH = './resources/the_starry_night-wallpaper-2560x1600.jpg'
-# IMG_PATH = './sky-dd.jpeg'
-
-# In[27]:
+class DeepDreamVisualisation():
+    pass
 
 
-pil_img = Image.open(IMG_PATH)
-
-# In[28]:
-print(pil_img.size)
-
-img_transform = transforms.Compose([
-    # transforms.Resize((224, 224)),
-    transforms.ToTensor(),
-        # transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
-])
-
-# In[5]:
-
-
-# x = img_transform(pil_img).cuda()
-
-# In[6]:
-
-
-model = models.resnet50(pretrained=True).cuda()
-
-import time
-# In[37]:
-
-
-class DeepDream:
-    def __init__(self, module, layer):
-        self.module = module
+class DeepDream(Visualisation):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.trace = (None, None, None)
-        self.layer = layer
 
         self.transformMean = [0.485, 0.456, 0.406]
         self.transformStd = [0.229, 0.224, 0.225]
@@ -78,7 +39,6 @@ class DeepDream:
         self.lr = 0.1
 
         self.out = None
-        self.register_hooks()
 
     def register_hooks(self):
         def hook(module, input, output):
@@ -87,11 +47,11 @@ class DeepDream:
                 loss.backward()
 
                 grad = self.image_var.grad.data
-                self.image_var.data = self.image_var.data + (self.lr * grad)
+                self.image_var.data = self.image_var.data + (self.name2properties['lr']['value'] * grad)
 
                 raise Exception('Layer found!')
 
-        self.layer.register_forward_hook(hook)
+        return self.layer.register_forward_hook(hook)
 
     def toImage(self, input):
         return input * self.std + self.mean
@@ -109,7 +69,6 @@ class DeepDream:
             except:
                 pass
 
-
         dreamed = self.image_var.data.squeeze()
         c, w, h = dreamed.shape
 
@@ -118,17 +77,16 @@ class DeepDream:
         dreamed = dreamed * self.std + self.mean
         dreamed = dreamed.view((c, w, h))
 
-        del self.image_var,  image_pre
+        del self.image_var, image_pre
 
         return dreamed
-
 
     def deep_dream(self, image, n, top, scale_factor):
         if n > 0:
             b, c, w, h = image.shape
-            print(w,h)
+            # print(w,h)
             image = TF.to_pil_image(image.squeeze().cpu())
-            image_down = TF.resize(image, (int(w *scale_factor), int(h * scale_factor)), Image.ANTIALIAS)
+            image_down = TF.resize(image, (int(w * scale_factor), int(h * scale_factor)), Image.ANTIALIAS)
             image_down = image_down.filter(ImageFilter.GaussianBlur(0.5))
 
             image_down = TF.to_tensor(image_down).unsqueeze(0)
@@ -144,62 +102,43 @@ class DeepDream:
 
         return self.step(image, steps=8, save=top == n + 1)
 
+    def __call__(self, inputs, layer, n_repeat=6, scale_factor=0.7):
+        print(self.name2properties['octaves']['value'])
+        self.layer = layer
+        handle = self.register_hooks()
+        dd = self.deep_dream(inputs, 10,
+                             top=self.name2properties['octaves']['value'],
+                             scale_factor=self.name2properties['scale']['value'])
+        handle.remove()
+        return dd.unsqueeze(0)
 
-    def __call__(self, image, n_repeat=6, scale_factor=0.7):
-        return self.deep_dream(image, n_repeat, top=n_repeat, scale_factor=scale_factor)
+    @property
+    def name(self):
+        return 'deep dream'
 
-
-
-print(model)
-
-original_image = np.array(pil_img)
-N = 8
-h, w, c = original_image.shape
-h_N, w_N = h // N, w // N
-images = view_as_windows(original_image, (h_N, w_N, 3), (h_N,w_N, 3)).squeeze()
-
-dd = DeepDream(model, model.layer4[0].conv2)
-
-rec = None
-# print(images.shape)
-for rows in images:
-    col = None
-    for cols in rows:
-        image = Image.fromarray(cols.astype('uint8'), 'RGB')
-
-        dreamed = dd(img_transform(image).unsqueeze(0), n_repeat=6, scale_factor=0.7)
-        # dreamed = torch.nn.functional.interpolate(dreamed, scale_factor=0.7)
-        dreamed = transforms.ToPILImage()(dreamed.squeeze().cpu())
-
-        dreamed_np = np.array(dreamed)
-
-        if col is None: col = dreamed_np
-        else: col = np.hstack((col, dreamed_np))
-        # plt.imshow(dreamed_np)
-        # plt.show()
-
-        # print(image.shape)
-        # plt.imshow(image)
-        # plt.show()
-    if rec is None: rec = col
-    else: rec = np.vstack((rec, col))
-
-
-print(rec.shape)
-
-img = Image.fromarray(rec.astype('uint8'), 'RGB')
-# print(model)
-
-
-#
-# # In[35]:
-# #
-# # img.show()
-img.save('dream' + ".jpg", "JPEG")
-
-# In[36]:
-
-# In[ ]:
-
-
-
+    def init_params(self):
+        return [{'name': 'lr',
+                 'type': 'slider',
+                 'min': 0.001,
+                 'max': 1,
+                 'value': 0.1,
+                 'step': 0.001,
+                 'params': []
+                 },
+                {'name': 'octaves',
+                 'type': 'slider',
+                 'min': 1,
+                 'max': 10,
+                 'value': 6,
+                 'step': 1,
+                 'params': []
+                 },
+                {'name': 'scale',
+                 'type': 'slider',
+                 'min': 0.1,
+                 'max': 1,
+                 'value': 0.7,
+                 'step': 0.1,
+                 'params': []
+                 }
+                ]

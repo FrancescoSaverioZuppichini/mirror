@@ -16,13 +16,17 @@ import Slider from '@material-ui/lab/Slider';
 import Radio from '@material-ui/core/Radio';
 
 import { withStyles } from '@material-ui/core/styles';
+import {debounce} from 'throttle-debounce';
 
 
 class VisualisationSettings extends Component{
 
     update = (value) => {
         var visualisation = {...this.props.visualisation, ...value}
-     
+        console.log('value', value)
+        console.log('this.props.visualisation,', this.props.visualisation)
+        console.log('visualisation,', visualisation)
+
         this.props.update({ params: [visualisation]})
     }
 
@@ -35,7 +39,7 @@ class VisualisationSettings extends Component{
                         min={min}
                         max={max}
                         step={step}
-                        onChange={(e, v) => this.update({...param,  ...{value : v}}) }
+                        onChange={debounce(300, (e, v) => this.update({...param,  ...{value : v}})) }
                     />)
         }
 
@@ -103,12 +107,11 @@ class VisualisationSettingsRoot extends Component {
                     aria-label="A"
                     />
                 </ListItem>
-                <ListItem>
-                    {params.map(p => (<VisualisationSettings 
+                    {params.map((p, i) => (<VisualisationSettings 
                     {...this.props}
                     visualisation={p} 
-                    update={this.update}/>))}
-                </ListItem>
+                    update={this.update}
+                    key={i}/>))}
             </List>
         )
     }
@@ -154,7 +157,7 @@ class Settings extends Component {
                         <Slider
                             value={module.state.settings.size}
                             aria-labelledby="label"
-                            min={0}
+                            min={1}
                             max={100}
                             step={1}
                             onChange={this.handleSlider}

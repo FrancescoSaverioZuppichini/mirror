@@ -2,13 +2,13 @@ from mirror import mirror
 
 from PIL import Image
 
-from torchvision.models import resnet101, resnet18
+from torchvision.models import resnet101, resnet18, vgg16
 from torchvision.transforms import ToTensor, Resize, Compose
 
 # model = resnet101(True)
-model = resnet18(True)
+model = vgg16(True)
 
-cat = Image.open("cat.jpg")
+cat = Image.open("/home/francesco/Documents/mirror/mirror/resources/sky-dd.jpeg")
 
 input = Compose([Resize((224,224)), ToTensor()])(cat)
 

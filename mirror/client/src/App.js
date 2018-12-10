@@ -31,15 +31,22 @@ const styles = theme => ({
     display: 'flex',
     minHeight: '100vh'
   },
+  typography: {
+    useNextVariants: true,
+  },
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
   },
   drawerPaper: {
-    position: 'relative',
+    // position: 'relative',
     width: drawerWidth,
   },
   content: {
     flexGrow: 1,
+    marginLeft: '300px',
+    // position: 'fixed',
+    // width: '100%',
+    // height: '100%',
     backgroundColor: theme.palette.background.default,
     padding: theme.spacing.unit * 3,
     minWidth: 0, // So the Typography noWrap works
@@ -59,6 +66,9 @@ const styles = theme => ({
 
   sliders : {
     width: '200px !important'
+  },
+
+  layersOuput : {
   }
 })
 
@@ -109,7 +119,7 @@ class App extends Component {
 
               <main className={classes.content}>
                 <div className={classes.toolbar} />
-                <LayerOutputs module={module} />
+                <LayerOutputs module={module} classes={classes}/>
               </main>
               <Settings
                 toogle={module.toogleDrawer}

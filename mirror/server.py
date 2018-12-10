@@ -1,9 +1,10 @@
 import json
 import io
 import numpy as np
+import torch
 
 from flask import Flask, request, Response, send_file, jsonify
-from .visualisations import WeightsVisualisation, DummyVisualisation
+from .visualisations import WeightsVisualisation, DummyVisualisation, DeepDream
 from PIL import Image
 
 from torchvision.transforms import ToPILImage
@@ -14,15 +15,20 @@ class Builder:
         self.cache = {}
         self.visualisations = {}
         self.current_vis = None
+        self.device  = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
-    def build(self, input, model, tracer, visualisations=None):
-        self.visualisations = [WeightsVisualisation(model, tracer), DummyVisualisation(model, tracer)]
+    def build(self, input, model, tracer, visualisations=[]):
+        input = input.to(self.device)
+        model = model.to(self.device)
+
+        self.visualisations = [WeightsVisualisation(model, tracer), DeepDream(model, tracer), *visualisations]
 
         self.name2visualisations = { v.name : v for v in self.visualisations}
         self.current_vis =  self.visualisations[0]
 
         app = Flask(__name__)
         MAX_LINKS_EVERY_REQUEST = 64
+
 
         @app.route('/')
         def root():
@@ -110,7 +116,8 @@ class Builder:
             try:
 
                 output = self.outputs[output_id]
-                output = output.detach()
+
+                output = output.detach().cpu()
 
                 pil_img = ToPILImage()(output)
 
