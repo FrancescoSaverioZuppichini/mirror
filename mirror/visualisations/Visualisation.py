@@ -5,14 +5,13 @@ class Visualisation:
         self.params = self.init_params()
         self.properties = self.init_properties()
         self.cache = {}
-        self.name2properties = {p['name']: p for p in self.params}
 
     @property
     def name(self):
         pass
 
     def init_params(self):
-        return []
+        return {}
 
     def init_properties(self):
         return {'name': self.name,

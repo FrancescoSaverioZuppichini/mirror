@@ -2,11 +2,12 @@ import json
 import io
 import numpy as np
 import torch
+import time
 
 from flask import Flask, request, Response, send_file, jsonify
 from .visualisations import WeightsVisualisation, DummyVisualisation, DeepDream
 from PIL import Image
-
+import pprint
 from torchvision.transforms import ToPILImage
 
 class Builder:
@@ -67,7 +68,8 @@ class Builder:
                 response = Response(status=500, response='Visualisation {} not supported or does not exist'.format(vis_key))
             else:
                 self.name2visualisations[vis_key].properties = data
-                print(self.name2visualisations[vis_key].properties)
+                self.name2visualisations[vis_key].params = self.name2visualisations[vis_key].properties['params']
+                pprint.pprint(self.name2visualisations[vis_key].properties)
                 self.current_vis = self.name2visualisations[vis_key]
                 self.name2visualisations[vis_key].cache = {}
                 response = jsonify(self.name2visualisations[vis_key].properties)
@@ -83,6 +85,7 @@ class Builder:
                 # TODO need to cache for vis
                 layer_cache = self.current_vis.cache[input]
 
+                # layer_cache[layer] = self.current_vis(input, layer)
                 if layer not in layer_cache: layer_cache[layer] = self.current_vis(input, layer)
                 else: print('cached')
                 self.outputs = layer_cache[layer]
@@ -97,7 +100,11 @@ class Builder:
 
                 if last >= max: raise StopIteration
 
-                response = ['/api/model/image/{}/{}/{}/{}'.format(hash(input), hash(self.current_vis), id, i) for i in range(last, max)]
+                response = ['/api/model/image/{}/{}/{}/{}/{}'.format(hash(input),
+                                                                  hash(self.current_vis),
+                                                                  hash(time.time()),
+                                                                  id,
+                                                                  i) for i in range(last, max)]
                 response = jsonify(response)
 
             except KeyError:
@@ -109,8 +116,8 @@ class Builder:
 
             return response
 
-        @app.route('/api/model/image/<input_id>/<vis_id>/<layer_id>/<output_id>')
-        def api_model_layer_output_image(input_id, vis_id, layer_id, output_id):
+        @app.route('/api/model/image/<input_id>/<vis_id>/<layer_id>/<time>/<output_id>')
+        def api_model_layer_output_image(input_id, vis_id, layer_id, time, output_id):
             output_id = int(output_id)
 
             try:

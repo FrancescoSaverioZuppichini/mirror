@@ -40,6 +40,7 @@ class DeepDream(Visualisation):
 
         self.out = None
 
+
     def register_hooks(self):
         def hook(module, input, output):
             if module == self.layer:
@@ -47,7 +48,7 @@ class DeepDream(Visualisation):
                 loss.backward()
 
                 grad = self.image_var.grad.data
-                self.image_var.data = self.image_var.data + (self.name2properties['lr']['value'] * grad)
+                self.image_var.data = self.image_var.data + (self.params['lr']['value'] * grad)
 
                 raise Exception('Layer found!')
 
@@ -103,13 +104,14 @@ class DeepDream(Visualisation):
         return self.step(image, steps=8, save=top == n + 1)
 
     def __call__(self, inputs, layer, n_repeat=6, scale_factor=0.7):
-        print(self.name2properties['octaves']['value'])
         self.layer = layer
         handle = self.register_hooks()
-        dd = self.deep_dream(inputs, 10,
-                             top=self.name2properties['octaves']['value'],
-                             scale_factor=self.name2properties['scale']['value'])
+        print(self.params['octaves']['value'])
+        dd = self.deep_dream(inputs, self.params['octaves']['value'],
+                             top=self.params['octaves']['value'],
+                             scale_factor=self.params['scale']['value'])
         handle.remove()
+        print('done')
         return dd.unsqueeze(0)
 
     @property
@@ -117,28 +119,28 @@ class DeepDream(Visualisation):
         return 'deep dream'
 
     def init_params(self):
-        return [{'name': 'lr',
+        return {'lr' : {
                  'type': 'slider',
                  'min': 0.001,
                  'max': 1,
                  'value': 0.1,
                  'step': 0.001,
-                 'params': []
+                 'params': {}
                  },
-                {'name': 'octaves',
+                'octaves' : {
                  'type': 'slider',
                  'min': 1,
                  'max': 10,
-                 'value': 6,
+                 'value': 4,
                  'step': 1,
-                 'params': []
+                 'params': {}
                  },
-                {'name': 'scale',
+              'scale' : {
                  'type': 'slider',
                  'min': 0.1,
                  'max': 1,
                  'value': 0.7,
                  'step': 0.1,
-                 'params': []
+                 'params': {}
                  }
-                ]
+        }

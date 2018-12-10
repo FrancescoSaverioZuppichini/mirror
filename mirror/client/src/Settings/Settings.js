@@ -22,12 +22,14 @@ import {debounce} from 'throttle-debounce';
 class VisualisationSettings extends Component{
 
     update = (value) => {
-        var visualisation = {...this.props.visualisation, ...value}
+        var param = {...this.props.param, ...value}
         console.log('value', value)
-        console.log('this.props.visualisation,', this.props.visualisation)
-        console.log('visualisation,', visualisation)
-
-        this.props.update({ params: [visualisation]})
+        console.log('this.props.visualisation,', this.props.param)
+        console.log('visualisation,', param)
+        const key = this.props.name
+        var fromDown =  {}
+        fromDown[key] = param
+        this.props.update( fromDown)
     }
 
     makeParam = (param) => {
@@ -55,9 +57,9 @@ class VisualisationSettings extends Component{
     }
 
     render(){
-        const { classes, module, visualisation} = this.props
-        const { name, params} = visualisation
-        console.log('render', visualisation)
+        const { classes, module, param, name} = this.props
+        const {params} = param
+        console.log('render', param)
 
         return (
             <List disablePadding>
@@ -65,15 +67,17 @@ class VisualisationSettings extends Component{
                     <ListItemText>
                     <div>{name}</div>
                     <div className={classes.sliders}>
-                    {this.makeParam(visualisation)}
+                    {this.makeParam(param)}
                     </div>
                     </ListItemText>
                 </ListItem>
                 <ListItem>
-                {params.map(p => (<VisualisationSettings 
-                {...this.props}
-                visualisation={p} 
-                update={this.update}/>))}
+                {Object.keys(params).map((k, i) => (<VisualisationSettings 
+                    {...this.props}
+                    name={k}
+                    param={params[k]} 
+                    update={this.update}
+                    key={i}/>))}
                 </ListItem>
             </List>
         )
@@ -81,9 +85,16 @@ class VisualisationSettings extends Component{
 }
 
 class VisualisationSettingsRoot extends Component {
-    update = (value) => {
-        var visualisation = {...this.props.visualisation, ...value}
-
+    update = (value, down=true) => {
+        console.log('from down', value)
+        
+        if(down) {
+            var visualisation = {...this.props.visualisation.params, ...value}
+            visualisation = {...this.props.visualisation, params: visualisation}
+        } else{
+            visualisation = {...this.props.visualisation, ...value}
+        }
+        console.log(visualisation)
         this.props.module.setVisualisationsSettings(visualisation)
         this.props.module.getLayerOutputs(this.props.module.state.layer, true)
 
@@ -101,15 +112,16 @@ class VisualisationSettingsRoot extends Component {
                     </ListItemText>
                     <Radio
                     checked={this.props.module.state.currentVisualisation.name == name}
-                    onChange={(e, v) => this.update({...visualisation, value:v }) }
+                    onChange={(e, v) => this.update({...visualisation, value:v }, false) }
                     value="a"
                     name="radio-button-demo"
                     aria-label="A"
                     />
                 </ListItem>
-                    {params.map((p, i) => (<VisualisationSettings 
+                    {Object.keys(params).map((k, i) => (<VisualisationSettings 
                     {...this.props}
-                    visualisation={p} 
+                    name={k}
+                    param={params[k]} 
                     update={this.update}
                     key={i}/>))}
             </List>
@@ -125,7 +137,7 @@ class Settings extends Component {
 
     onVisualisationSettingsChange = (data) => {
         console.log('onVisualisationSettingsChange', data)
-        this.props.module.setVisualisationsSettings(data.params[0])
+        this.props.module.setVisualisationsSettings(data)
     }
 
     handleSlider = (e, size) => {

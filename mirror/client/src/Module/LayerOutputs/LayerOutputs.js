@@ -42,7 +42,7 @@ const Image = ({ src, size }) => {
         height: `${100 * (size / 10)}px`,
         width: `${100 * (size / 10)}px`
     }
-
+    console.log('dcioaneee')
 
     return (<Grid item>
         <img src={src} style={style} />
