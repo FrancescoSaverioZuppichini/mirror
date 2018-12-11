@@ -1,16 +1,18 @@
 from mirror import mirror
+from mirror.visualisations import DeepDream
 
 from PIL import Image
 
-from torchvision.models import resnet101
+from torchvision.models import resnet101, resnet18, vgg16
 from torchvision.transforms import ToTensor, Resize, Compose
 
-model = resnet101(True)
+# create a model
+model = vgg16(pretrained=True)
 
-cat = Image.open("cat.jpg")
-
+cat = Image.open("./cat.jpg")
+# resize the image and make it a tensor
 input = Compose([Resize((224,224)), ToTensor()])(cat)
-
-input = input.view(1,3,224,224)
-
-mirror(input, model)
+# add 1 dim for batch
+input = input.unsqueeze(0)
+# call mirror with the input and the model
+mirror(input, model, visualisations=[DeepDream])
