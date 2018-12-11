@@ -1,5 +1,5 @@
 from mirror import mirror
-from mirror.visualisations import DeepDream
+from mirror.visualisations import *
 
 from PIL import Image
 
