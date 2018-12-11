@@ -32,7 +32,6 @@ class DeepDream(Visualisation):
 
         self.mean = torch.Tensor(self.transformStd).to(self.device)
         self.std = torch.Tensor(self.transformMean).to(self.device)
-        self.lr = 0.1
 
         self.out = None
 
@@ -56,7 +55,6 @@ class DeepDream(Visualisation):
     def step(self, image, steps=5, save=False):
 
         self.module.zero_grad()
-
         image_pre = self.transform_preprocess(image.squeeze().cpu()).to(self.device).unsqueeze(0)
         self.image_var = Variable(image_pre, requires_grad=True).to(self.device)
 

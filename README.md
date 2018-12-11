@@ -77,6 +77,8 @@ The `init_params`  function returns a dictionary of options that will be showed 
 ### TODO
 - [x] Cache reused layer 
 - [x] Make a generic abstraction of a visualisation in order to add more features  
+- [ ] Add output of the model
+- [ ] Add dropdown as parameter
 - [ ] Add more options for the parameters (dropdown, text)
 - [ ] Support multiple inputs
 - [ ] Support multiple models

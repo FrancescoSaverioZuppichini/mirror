@@ -89,7 +89,7 @@ class Builder:
                 layer_cache = self.current_vis.cache[input]
 
                 # layer_cache[layer] = self.current_vis(input, layer)
-                if layer not in layer_cache: layer_cache[layer] = self.current_vis(input, layer)
+                if layer not in layer_cache: layer_cache[layer] = self.current_vis(input.clone(), layer)
                 else: print('cached')
                 self.outputs = layer_cache[layer]
 
