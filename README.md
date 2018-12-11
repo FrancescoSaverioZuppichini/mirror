@@ -3,7 +3,7 @@
 
 This is a raw beta so expect lots of things to change and improve over time.
 
-![alt](https://raw.githubusercontent.com/FrancescoSaverioZuppichini/mirror/master/mirror/resources/mirror.gif)
+![alt](https://github.com/FrancescoSaverioZuppichini/mirror/blob/develop/resources/mirror.gif?raw=true)
 
 ### Getting started
 
@@ -38,6 +38,8 @@ mirror(input, model, visualisations=[DeepDream])
 
 It will automatic open a new tab in your browser
 
+![alt](https://github.com/FrancescoSaverioZuppichini/mirror/blob/develop/resources/mirror.jpg?raw=true)
+
 ### Create a Visualisation
 
 You can find an example below
@@ -65,6 +67,8 @@ class DummyVisualisation(Visualisation):
                  }}
 
 ```
+
+![alt](https://github.com/FrancescoSaverioZuppichini/mirror/blob/develop/resources/dummy.jpg?raw=true)
 
 The `__call__` function is called each time you click a layer or change a value in the options on the right.
 
