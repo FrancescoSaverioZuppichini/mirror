@@ -72,7 +72,7 @@ class DummyVisualisation(Visualisation):
 
 The `__call__` function is called each time you click a layer or change a value in the options on the right.
 
-The `init_params` parameters function returns a dictionary of options that will be showed on the rigth drawer of the application. For know only `slider` and `radio` is supported
+The `init_params`  function returns a dictionary of options that will be showed on the right drawer of the application. For now only `slider` and `radio` are supported
 
 ### TODO
 - [x] Cache reused layer 
