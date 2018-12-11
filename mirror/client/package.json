@@ -13,6 +13,7 @@
     "react-script": "^2.0.5",
     "react-scripts": "^2.0.4",
     "reactstrap": "^6.5.0",
+    "throttle-debounce": "^2.0.1",
     "unstated": "^2.1.1"
   },
   "scripts": {

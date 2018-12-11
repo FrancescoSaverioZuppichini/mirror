@@ -7,7 +7,7 @@ class Node:
         self.v = v
         self.c = []
         self.id = str(hash(v) % ((sys.maxsize + 1) * 2))
-        self.traced = []
+        self.traced = None
 
     def __str__(self):
         return str(self.v)
@@ -20,7 +20,7 @@ class Node:
         return str(self.v)
 
     def __call__(self, module, input, output):
-        self.traced.append((module, input, output))
+        self.traced = (module, input, output)
 
     def to_dict(self):
         return { 'id': self.id, 'name' : str(self.v), 'children' : [] }
@@ -77,7 +77,7 @@ class Tracer:
     def get_operations(self, node):
         #     leaf
         if len(node.c) == 0:
-            self.operations.append(node.traced[0])
+            self.operations.append(node.traced)
         for c in node.c:
             self.get_operations(c)
 

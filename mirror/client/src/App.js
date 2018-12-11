@@ -18,6 +18,7 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import LayerOutputs from './Module/LayerOutputs/LayerOutputs'
 import MoreIcon from '@material-ui/icons/MoreVert';
 
+import Hidden from '@material-ui/core/Hidden';
 
 const drawerWidth = 300;
 
@@ -25,24 +26,38 @@ const styles = theme => ({
   root: {
     flexGrow: 1,
     // height: 440,
-    zIndex: 1,
+    // zIndex: 1,
     // overflow: 'hidden',
-    position: 'relative',
+    // position: 'relative',
     display: 'flex',
+    flexDirection : 'row',
     minHeight: '100vh'
+  },
+  typography: {
+    useNextVariants: true,
   },
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
   },
+  drawer: {
+    width: drawerWidth,
+    flexShrink: 0,
+  },
   drawerPaper: {
-    position: 'relative',
+    flexShrink: 0,
+
+    // position: 'relative',
     width: drawerWidth,
   },
   content: {
     flexGrow: 1,
+    // marginLeft: '300px',
+    // position: 'fixed',
+    // width: '100%',
+    // height: '100%',
     backgroundColor: theme.palette.background.default,
     padding: theme.spacing.unit * 3,
-    minWidth: 0, // So the Typography noWrap works
+    // minWidth: 0, // So the Typography noWrap works
   },
   toolbar: theme.mixins.toolbar,
 
@@ -53,9 +68,16 @@ const styles = theme => ({
     zIndex: 9999
   },
 
-  settn: {
+  settings: {
     width: '300px !important'
-}
+  },
+
+  sliders : {
+    width: '200px !important'
+  },
+
+  layersOuput : {
+  }
 })
 
 function MyAppBar({ module, classes }) {
@@ -66,9 +88,12 @@ function MyAppBar({ module, classes }) {
           Mirror
       </Typography>
       <div style={{flexGrow: 1}} ></div>
+      <Hidden mdUp>
         <IconButton color="inherit" onClick={module.toogleDrawer}>
           <MoreIcon />
         </IconButton>
+        </Hidden>
+
       </Toolbar>
     </AppBar>
   )
@@ -79,6 +104,7 @@ class App extends Component {
     openSettings: false
 
   }
+
 
   toggleSettings = () => {
     const openSettings = !this.state.openSettings
@@ -94,23 +120,40 @@ class App extends Component {
             <div className={classes.root}>
               <MyAppBar module={MyAppBar} {...this.props} module={module} />
 
-              <Drawer variant="permanent" classes={{
+              <Drawer variant="permanent"
+                      className={classes.drawer}
+
+              classes={{
                 paper: classes.drawerPaper,
               }}>
                 <div className={classes.toolbar} />
                 <Module module={module} />
               </Drawer>
+
               {module.state.isLoading ? (<LinearProgress color="secondary" className={classes.progress} />) : ''}
 
               <main className={classes.content}>
                 <div className={classes.toolbar} />
-                <LayerOutputs module={module} />
+                <LayerOutputs module={module} classes={classes}/>
               </main>
+
+                <Hidden smDown >
               <Settings
                 toogle={module.toogleDrawer}
                 open={module.state.open}
                 module={module} 
                 classes={classes}/>
+                  </Hidden>
+
+              <Hidden mdUp>
+                <Settings
+                toogle={module.toogleDrawer}
+                open={module.state.open}
+                module={module} 
+                classes={classes}
+                small={true}/>
+                  </Hidden>
+
             </div>
           )}
         </Subscribe>
