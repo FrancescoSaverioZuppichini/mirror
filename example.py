@@ -8,7 +8,10 @@ from torchvision.transforms import ToTensor, Resize, Compose
 # model = resnet101(True)
 model = vgg16(True)
 
-cat = Image.open("/home/francesco/Documents/mirror/mirror/resources/sky-dd.jpeg")
+# cat = Image.open("/home/francesco/Documents/mirror/mirror/resources/sky-dd.jpeg")
+
+cat = Image.open("./cat.jpg")
+
 #
 # cat = Image.open("/home/francesco/Documents/mirror/mirror/resources/the_starry_night-wallpaper-1920x1200.jpg")
 

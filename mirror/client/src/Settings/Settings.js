@@ -23,9 +23,9 @@ class VisualisationSettings extends Component{
 
     update = (value) => {
         var param = {...this.props.param, ...value}
-        console.log('value', value)
-        console.log('this.props.visualisation,', this.props.param)
-        console.log('visualisation,', param)
+        // console.log('value', value)
+        // console.log('this.props.visualisation,', this.props.param)
+        // console.log('visualisation,', param)
         const key = this.props.name
         var fromDown =  {}
         fromDown[key] = param
@@ -59,7 +59,6 @@ class VisualisationSettings extends Component{
     render(){
         const { classes, module, param, name} = this.props
         const {params} = param
-        console.log('render', param)
 
         return (
             <List disablePadding>
@@ -151,11 +150,16 @@ class Settings extends Component {
 
 
     render() {
-        const { toogle, classes, open, module } = this.props
+        const { toogle, classes, open, module, small=false } = this.props
         return (
             <Drawer anchor="right"
+                variant={small ? 'temporary' : 'permanent'} 
                 open={open}
+                className={classes.drawer}
                 onClose={toogle}
+                classes={{
+                    paper: classes.drawerPaper,
+                  }}
             >
                 <div className={classes.toolbar} />
                 <List className={classes.settings}>

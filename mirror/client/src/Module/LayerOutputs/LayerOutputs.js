@@ -42,7 +42,6 @@ const Image = ({ src, size }) => {
         height: `${100 * (size / 10)}px`,
         width: `${100 * (size / 10)}px`
     }
-    console.log('dcioaneee')
 
     return (<Grid item>
         <img src={src} style={style} />
@@ -54,7 +53,7 @@ class LayerOutputs extends React.Component {
         const { module, classes } = this.props
 
         return (
-            <div className={classes.layerss}>
+            <div >
                 <Grid
                     container
                     direction="row"
