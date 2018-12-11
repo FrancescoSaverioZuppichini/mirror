@@ -15,4 +15,4 @@ input = Compose([Resize((224,224)), ToTensor()])(cat)
 # add 1 dim for batch
 input = input.unsqueeze(0)
 # call mirror with the input and the model
-mirror(input, model, visualisations=[DeepDream, ])
+mirror(input, model, visualisations=[DeepDream])
