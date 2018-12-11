@@ -135,7 +135,6 @@ class Settings extends Component {
     }
 
     onVisualisationSettingsChange = (data) => {
-        console.log('onVisualisationSettingsChange', data)
         this.props.module.setVisualisationsSettings(data)
     }
 
@@ -160,7 +159,7 @@ class Settings extends Component {
                 classes={{
                     paper: classes.drawerPaper,
                   }}
-            >
+                >
                 <div className={classes.toolbar} />
                 <List className={classes.settings}>
                     <ListItem>

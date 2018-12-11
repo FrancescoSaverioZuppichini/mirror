@@ -15,10 +15,6 @@ import torchvision.transforms.functional as TF
 from PIL import Image, ImageFilter, ImageChops
 
 
-class DeepDreamVisualisation():
-    pass
-
-
 class DeepDream(Visualisation):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

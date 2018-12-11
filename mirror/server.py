@@ -5,7 +5,7 @@ import torch
 import time
 
 from flask import Flask, request, Response, send_file, jsonify
-from .visualisations import WeightsVisualisation, DummyVisualisation, DeepDream
+from .visualisations import WeightsVisualisation
 from PIL import Image
 import pprint
 from torchvision.transforms import ToPILImage
@@ -22,7 +22,8 @@ class Builder:
         input = input.to(self.device)
         model = model.to(self.device)
 
-        self.visualisations = [WeightsVisualisation(model, tracer), DeepDream(model, tracer), *visualisations]
+        visualisations = [v(model, tracer) for v in visualisations]
+        self.visualisations = [WeightsVisualisation(model, tracer), *visualisations]
 
         self.name2visualisations = { v.name : v for v in self.visualisations}
         self.current_vis =  self.visualisations[0]
@@ -54,7 +55,8 @@ class Builder:
         def api_visualisations():
             serialised = [v.properties for v in self.visualisations]
 
-            response = jsonify(serialised)
+            response = jsonify({ 'visualisations': serialised,
+                                   'current': self.current_vis.properties})
 
             return response
 
@@ -67,11 +69,12 @@ class Builder:
             if vis_key not in self.name2visualisations:
                 response = Response(status=500, response='Visualisation {} not supported or does not exist'.format(vis_key))
             else:
+                # TODO I should think on a cleaver way to update properties and params
                 self.name2visualisations[vis_key].properties = data
                 self.name2visualisations[vis_key].params = self.name2visualisations[vis_key].properties['params']
-                pprint.pprint(self.name2visualisations[vis_key].properties)
                 self.current_vis = self.name2visualisations[vis_key]
                 self.name2visualisations[vis_key].cache = {}
+
                 response = jsonify(self.name2visualisations[vis_key].properties)
 
             return response
@@ -80,7 +83,7 @@ class Builder:
         def api_model_layer_output(id):
             try:
                 layer = tracer.idx_to_value[id].v
-                print(self.current_vis)
+
                 if input not in self.current_vis.cache: self.current_vis.cache[input] = {}
                 # TODO need to cache for vis
                 layer_cache = self.current_vis.cache[input]
@@ -91,28 +94,27 @@ class Builder:
                 self.outputs = layer_cache[layer]
 
                 outputs = self.outputs
-                print(self.outputs.shape)
 
                 if len(outputs.shape) < 3:  raise ValueError
 
                 last = int(request.args['last'])
                 max = min((last + MAX_LINKS_EVERY_REQUEST), outputs.shape[0])
 
-                if last >= max: raise StopIteration
-
                 response = ['/api/model/image/{}/{}/{}/{}/{}'.format(hash(input),
                                                                   hash(self.current_vis),
                                                                   hash(time.time()),
                                                                   id,
                                                                   i) for i in range(last, max)]
-                response = jsonify(response)
+
+                response = jsonify({ 'links' : response, 'next': last + 1< max})
+
 
             except KeyError:
                 response = Response(status=500, response='Index not found.')
             except ValueError:
                 response = Response(status=404, response='Outputs must be an array of images')
             except StopIteration:
-                response = Response(status=404, response='No more.')
+                response = jsonify({ 'links' : [], 'next': False})
 
             return response
 

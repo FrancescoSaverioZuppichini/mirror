@@ -1,4 +1,4 @@
-from .Visualisation import Visualisation
+from mirror.visualisations.Visualisation import Visualisation
 
 class DummyVisualisation(Visualisation):
 

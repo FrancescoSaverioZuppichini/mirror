@@ -14,6 +14,7 @@ class ModuleContainer extends Container {
         outputs: [],
         layer: { name : ''},
         last: 0,
+        next: false,
         settings: { size: 50 }
     }
 
@@ -40,9 +41,9 @@ class ModuleContainer extends Container {
 
             const res = await axios.get(api.getModuleLayerOutput(layer.id, last), { params: { last } })
     
-            var outputs = isSameLayer ? this.state.outputs.concat(res.data) : res.data
+            var outputs = isSameLayer ? this.state.outputs.concat(res.data.links) : res.data.links
             
-            await this.setState({ outputs, layer, last, isLoading: false })
+            await this.setState({ outputs, layer, last, isLoading: false, next: res.data.next })
         } catch {
             await this.setState({ isLoading: false })
         }
@@ -56,9 +57,9 @@ class ModuleContainer extends Container {
         await this.setState({ isLoading: true })
 
         const res = await axios.get(api.GET_VISUALISATIONS)
-        const visualisations = res.data
-
-        await this.setState({ visualisations, isLoading: false })
+        const visualisations = res.data.visualisations
+        const currentVisualisation = res.data.current
+        await this.setState({ visualisations, isLoading: false, currentVisualisation })
     }
 
     async setVisualisationsSettings(data){

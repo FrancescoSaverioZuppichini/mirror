@@ -81,9 +81,10 @@ class LayerOutputs extends React.Component {
                     <Grid item>
                     {this.props.module.state.outputs.length == 0 ? 
                         (<h1>Nothing to show</h1>) : 
-                        (<Button variant="contained" color="primary" onClick={() => module.getLayerOutputs()}>
+                        this.props.module.state.next ? (
+                        <Button variant="contained" color="primary" onClick={() => module.getLayerOutputs()}>
                             More
-                        </Button>)}
+                        </Button>) : ''}
                         
                     </Grid>
                 </Grid>

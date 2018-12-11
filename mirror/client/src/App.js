@@ -137,7 +137,7 @@ class App extends Component {
                 <LayerOutputs module={module} classes={classes}/>
               </main>
 
-                <Hidden mdDown >
+                <Hidden smDown >
               <Settings
                 toogle={module.toogleDrawer}
                 open={module.state.open}
