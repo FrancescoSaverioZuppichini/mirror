@@ -30,8 +30,8 @@ class DeepDream(Visualisation):
             )
         ])
 
-        self.mean = torch.Tensor(self.transformStd).cuda()
-        self.std = torch.Tensor(self.transformMean).cuda()
+        self.mean = torch.Tensor(self.transformStd).to(self.device)
+        self.std = torch.Tensor(self.transformMean).to(self.device)
         self.lr = 0.1
 
         self.out = None
@@ -57,8 +57,8 @@ class DeepDream(Visualisation):
 
         self.module.zero_grad()
 
-        image_pre = self.transform_preprocess(image.squeeze().cpu()).cuda().unsqueeze(0)
-        self.image_var = Variable(image_pre, requires_grad=True).cuda()
+        image_pre = self.transform_preprocess(image.squeeze().cpu()).to(self.device).unsqueeze(0)
+        self.image_var = Variable(image_pre, requires_grad=True).to(self.device)
 
         for i in range(steps):
             try:
@@ -94,7 +94,7 @@ class DeepDream(Visualisation):
 
             image = ImageChops.blend(from_down, image, 0.6)
 
-            image = TF.to_tensor(image).cuda()
+            image = TF.to_tensor(image).to(self.device)
         n = n - 1
 
         return self.step(image, steps=8, save=top == n + 1)
@@ -102,12 +102,12 @@ class DeepDream(Visualisation):
     def __call__(self, inputs, layer, n_repeat=6, scale_factor=0.7):
         self.layer = layer
         handle = self.register_hooks()
-        print(self.params['octaves']['value'])
+
         dd = self.deep_dream(inputs, self.params['octaves']['value'],
                              top=self.params['octaves']['value'],
                              scale_factor=self.params['scale']['value'])
         handle.remove()
-        print('done')
+
         return dd.unsqueeze(0)
 
     @property

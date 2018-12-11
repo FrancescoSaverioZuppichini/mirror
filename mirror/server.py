@@ -22,8 +22,8 @@ class Builder:
         input = input.to(self.device)
         model = model.to(self.device)
 
-        visualisations = [v(model, tracer) for v in visualisations]
-        self.visualisations = [WeightsVisualisation(model, tracer), *visualisations]
+        visualisations = [v(model, tracer, self.device) for v in visualisations]
+        self.visualisations = [WeightsVisualisation(model, tracer, self.device), *visualisations]
 
         self.name2visualisations = { v.name : v for v in self.visualisations}
         self.current_vis =  self.visualisations[0]
