@@ -35,24 +35,34 @@ class VisualisationSettings extends Component{
     makeParam = (param) => {
         if(param.type == 'slider') {
             var { max, min, step, value } = param
-            return  (<Slider
+            return  (
+                <ListItemText>
+                    <div>{this.props.name + ' : ' + value}</div>
+                    <div className={this.props.classes.sliders}>
+                    <Slider
                         value={value}
                         aria-labelledby="label"
                         min={min}
                         max={max}
                         step={step}
                         onChange={debounce(300, (e, v) => this.update({...param,  ...{value : v}})) }
-                    />)
+                    />
+                    </div>
+                </ListItemText>)
         }
 
         if(param.type == 'radio') {
-            return   (<Radio
+            return   (
+                <ListItemText>
+                    <div>{this.props.name}</div>
+                    <Radio
                     checked={param.value}
                     onChange={(e, v) => this.update({...param,  ...{value : !param.value}}) }
                     value="a"
                     name="radio-button-demo"
                     aria-label="A"
-                    />)
+                    />
+                </ListItemText>)
         }
     }
 
@@ -61,23 +71,13 @@ class VisualisationSettings extends Component{
         const {params} = param
 
         return (
-            <List disablePadding>
+            <List>
                 <ListItem>
-                    <ListItemText>
-                    <div>{name}</div>
-                    <div className={classes.sliders}>
                     {this.makeParam(param)}
-                    </div>
-                    </ListItemText>
                 </ListItem>
                 <ListItem>
-                {Object.keys(params).map((k, i) => (<VisualisationSettings 
-                    {...this.props}
-                    name={k}
-                    param={params[k]} 
-                    update={this.update}
-                    key={i}/>))}
                 </ListItem>
+                
             </List>
         )
     }

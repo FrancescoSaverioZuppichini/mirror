@@ -11,10 +11,11 @@ class DummyVisualisation(Visualisation):
 
     def init_params(self):
         return {'repeat' : {
-                 'type' : 'slider',
-                 'min' : 1,
-                 'max' : 100,
-                 'value' : 3,
-                 'step': 1,
-                 'params': {}
-                 }}
+                     'type' : 'slider',
+                     'min' : 1,
+                     'max' : 100,
+                     'value' : 3,
+                     'step': 1,
+                     'params': {}
+                 }
+        }
