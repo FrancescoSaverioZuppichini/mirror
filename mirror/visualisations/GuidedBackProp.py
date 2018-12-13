@@ -16,9 +16,6 @@ from torch.autograd import Variable
 from torchvision import transforms
 
 class Backprop(Visualisation):
-    """
-       Produces gradients generated with guided back propagation from the given image
-    """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.gradients = None
@@ -53,7 +50,6 @@ class Backprop(Visualisation):
 
         first_layer = self.tracer.operations[0][0]
         handles.append(first_layer.register_backward_hook(store_grad))
-
 
         return handles
 
