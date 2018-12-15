@@ -1,8 +1,3 @@
-"""
-Created on Thu Oct 26 11:23:47 2017
-
-@author: Utku Ozbulak - github.com/utkuozbulak
-"""
 import torch
 from torch.nn import ReLU
 from .Visualisation import Visualisation

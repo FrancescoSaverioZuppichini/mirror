@@ -82,7 +82,7 @@ class Builder:
 
         @app.route('/api/model/layer/output/<id>')
         def api_model_layer_output(id):
-            try:
+            # try:
                 layer = tracer.idx_to_value[id].v
 
                 if input not in self.current_vis.cache: self.current_vis.cache[input] = {}
@@ -110,14 +110,14 @@ class Builder:
                 response = jsonify({ 'links' : response, 'next': last + 1< max})
 
 
-            except KeyError:
-                response = Response(status=500, response='Index not found.')
-            except ValueError:
-                response = Response(status=404, response='Outputs must be an array of images')
-            except StopIteration:
-                response = jsonify({ 'links' : [], 'next': False})
+            # except KeyError:
+            #     response = Response(status=500, response='Index not found.')
+            # except ValueError:
+            #     response = Response(status=404, response='Outputs must be an array of images')
+            # except StopIteration:
+            #     response = jsonify({ 'links' : [], 'next': False})
 
-            return response
+                return response
 
         @app.route('/api/model/image/<input_id>/<vis_id>/<layer_id>/<time>/<output_id>')
         def api_model_layer_output_image(input_id, vis_id, layer_id, time, output_id):

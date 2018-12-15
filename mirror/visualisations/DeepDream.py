@@ -39,11 +39,12 @@ class DeepDream(Visualisation):
     def register_hooks(self):
         def hook(module, input, output):
             if module == self.layer:
-                loss = output.norm()
-                loss.backward()
+                self.layer_output = output
 
-                grad = self.image_var.grad.data
-                self.image_var.data = self.image_var.data + (self.params['lr']['value'] * grad)
+                self.optimizer.zero_grad()
+                loss = -torch.norm(self.layer_output)
+                loss.backward()
+                self.optimizer.step()
 
                 raise Exception('Layer found!')
 
@@ -58,11 +59,12 @@ class DeepDream(Visualisation):
         image_pre = self.transform_preprocess(image.squeeze().cpu()).to(self.device).unsqueeze(0)
         self.image_var = Variable(image_pre, requires_grad=True).to(self.device)
 
+        self.optimizer = torch.optim.Adam([self.image_var], lr=self.params['lr']['value'])
+
         for i in range(steps):
             try:
                 self.module(self.image_var)
-            except:
-                pass
+            except: pass
 
         dreamed = self.image_var.data.squeeze()
         c, w, h = dreamed.shape
