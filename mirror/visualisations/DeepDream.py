@@ -34,9 +34,12 @@ class DeepDream(Visualisation):
         self.std = torch.Tensor(self.transformMean).to(self.device)
 
         self.out = None
+        self.handle = None
 
 
     def register_hooks(self):
+        if self.handle: self.handle.remove()
+
         def hook(module, input, output):
             if module == self.layer:
                 self.layer_output = output
@@ -101,12 +104,12 @@ class DeepDream(Visualisation):
 
     def __call__(self, inputs, layer, n_repeat=6, scale_factor=0.7):
         self.layer = layer
-        handle = self.register_hooks()
+        self.handle = self.register_hooks()
 
         dd = self.deep_dream(inputs, self.params['octaves']['value'],
                              top=self.params['octaves']['value'],
                              scale_factor=self.params['scale']['value'])
-        handle.remove()
+        self.handle.remove()
 
         return dd.unsqueeze(0)
 

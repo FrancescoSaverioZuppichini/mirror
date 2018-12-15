@@ -9,6 +9,7 @@ from .visualisations import WeightsVisualisation
 from PIL import Image
 import pprint
 from torchvision.transforms import ToPILImage
+from .tree import Tracer
 
 class Builder:
     default_visualisations = [WeightsVisualisation]
@@ -22,6 +23,11 @@ class Builder:
     def build(self, input, model, tracer, visualisations=[]):
         input = input.to(self.device)
         model = model.to(self.device)
+
+        tracer = Tracer(module=model)
+        tracer(input)
+
+        self.tracer = tracer
 
         visualisations = [*self.default_visualisations, *visualisations]
         # instantiate visualisations
