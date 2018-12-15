@@ -95,3 +95,11 @@ class GradScan(Visualisation):
         [h.remove() for h in self.handles]
 
         return img.unsqueeze(0)
+
+    def init_params(self):
+        return {'lr': {
+            'type': 'menu',
+            'items' : ['sgd', 'adam'],
+            'value' : 'sgd'
+            }
+        }
