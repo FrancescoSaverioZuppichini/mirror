@@ -15,7 +15,7 @@ from torchvision import transforms
 import numpy as np
 import cv2
 
-class GradScan(Visualisation):
+class GradCam(Visualisation):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.gradients = None
@@ -24,7 +24,7 @@ class GradScan(Visualisation):
 
     @property
     def name(self):
-        return 'grad scan'
+        return 'grad cam'
 
 
     def register_hooks(self, layer):
@@ -96,11 +96,3 @@ class GradScan(Visualisation):
         [h.remove() for h in self.handles]
 
         return img.unsqueeze(0)
-
-    def init_params(self):
-        return {'lr': {
-            'type': 'menu',
-            'items' : ['sgd', 'adam'],
-            'value' : 'sgd'
-            }
-        }

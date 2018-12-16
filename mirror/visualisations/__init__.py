@@ -2,4 +2,4 @@ from .WeightsVisualisation import WeightsVisualisation
 from .DeepDream import DeepDream
 from .GuidedBackProp import GuidedBackprop, Backprop
 from .Filter import Filter
-from .GradScan import GradScan
+from .GradCam import GradCam
