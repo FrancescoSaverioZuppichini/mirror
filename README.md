@@ -40,7 +40,7 @@ It will automatic open a new tab in your browser
 
 ![alt](https://github.com/FrancescoSaverioZuppichini/mirror/blob/develop/resources/mirror.jpg?raw=true)
 
-### Availabe Visualisations
+### Available Visualisations
 #### Weights
 ![alt](https://github.com/FrancescoSaverioZuppichini/mirror/blob/develop/resources/weights.png?raw=true)
 ### Deep Dream
