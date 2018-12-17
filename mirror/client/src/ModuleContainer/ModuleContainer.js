@@ -71,7 +71,6 @@ class ModuleContainer extends Container {
     }
 
     async setVisualisationsSettings(data){
-        console.log('PORCODIO')
         if(this.state.isLoading){
             console.log('Loading')
             return
