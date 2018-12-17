@@ -1,5 +1,5 @@
 # Mirror
-## Pytorch cnn visualisation
+## Pytorch CNN Visualisation Tool
 
 This is a raw beta so expect lots of things to change and improve over time.
 
