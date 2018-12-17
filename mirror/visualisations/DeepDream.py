@@ -1,23 +1,17 @@
-from .Visualisation import Visualisation
-
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
-from torch.optim import SGD
-from torchvision import models
-from torch.autograd import Variable
-import scipy.ndimage as nd
-import numpy as np
-from skimage.util import view_as_blocks, view_as_windows, montage
-
-from torchvision import transforms
 import torchvision.transforms.functional as TF
+
+from torch.autograd import Variable
+from torchvision import transforms
+
 from PIL import Image, ImageFilter, ImageChops
 
+from .Visualisation import Visualisation
 
-class DeepDream(Visualisation):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+
+class DeepDream():
+    def __init__(self, device, module):
+        self.device, self.module = device, module
         self.trace = (None, None, None)
 
         self.transformMean = [0.485, 0.456, 0.406]
@@ -35,7 +29,6 @@ class DeepDream(Visualisation):
 
         self.out = None
         self.handle = None
-
 
     def register_hooks(self):
         if self.handle: self.handle.remove()
@@ -62,12 +55,13 @@ class DeepDream(Visualisation):
         image_pre = self.transform_preprocess(image.squeeze().cpu()).to(self.device).unsqueeze(0)
         self.image_var = Variable(image_pre, requires_grad=True).to(self.device)
 
-        self.optimizer = torch.optim.Adam([self.image_var], lr=self.params['lr']['value'])
+        self.optimizer = torch.optim.Adam([self.image_var], lr=self.lr)
 
         for i in range(steps):
             try:
                 self.module(self.image_var)
-            except: pass
+            except:
+                pass
 
         dreamed = self.image_var.data.squeeze()
         c, w, h = dreamed.shape
@@ -102,44 +96,57 @@ class DeepDream(Visualisation):
 
         return self.step(image, steps=8, save=top == n + 1)
 
-    def __call__(self, inputs, layer, n_repeat=6, scale_factor=0.7):
-        self.layer = layer
+    def __call__(self, inputs, layer, device, octaves=6, scale_factor=0.7, lr=0.1):
+        self.layer, self.lr, self.device = layer, lr, device
         self.handle = self.register_hooks()
-
-        dd = self.deep_dream(inputs, self.params['octaves']['value'],
-                             top=self.params['octaves']['value'],
-                             scale_factor=self.params['scale']['value'])
+        self.module.zero_grad()
+        dd = self.deep_dream(inputs, octaves,
+                             top=octaves,
+                             scale_factor=scale_factor)
         self.handle.remove()
 
         return dd.unsqueeze(0)
 
+
+class DeepDreamVis(Visualisation):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.vis = DeepDream(self.device, self.module)
+
     @property
     def name(self):
-        return 'deep dream'
+        return 'Deep dream'
+
+    def __call__(self, input_image, layer):
+        return self.vis(input_image, layer,
+                        self.device,
+                        self.params['octaves']['value'],
+                        self.params['scale']['value'],
+                        self.params['lr']['value'])
 
     def init_params(self):
-        return {'lr' : {
-                 'type': 'slider',
-                 'min': 0.001,
-                 'max': 1,
-                 'value': 0.1,
-                 'step': 0.001,
-                 'params': {}
-                 },
-                'octaves' : {
-                 'type': 'slider',
-                 'min': 1,
-                 'max': 10,
-                 'value': 4,
-                 'step': 1,
-                 'params': {}
-                 },
-              'scale' : {
-                 'type': 'slider',
-                 'min': 0.1,
-                 'max': 1,
-                 'value': 0.7,
-                 'step': 0.1,
-                 'params': {}
-                 }
+        return {'lr': {
+            'type': 'slider',
+            'min': 0.001,
+            'max': 1,
+            'value': 0.1,
+            'step': 0.001,
+            'params': {}
+        },
+            'octaves': {
+                'type': 'slider',
+                'min': 1,
+                'max': 10,
+                'value': 4,
+                'step': 1,
+                'params': {}
+            },
+            'scale': {
+                'type': 'slider',
+                'min': 0.1,
+                'max': 1,
+                'value': 0.7,
+                'step': 0.1,
+                'params': {}
+            }
         }

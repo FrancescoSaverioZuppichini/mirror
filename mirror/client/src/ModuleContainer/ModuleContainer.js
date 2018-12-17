@@ -33,6 +33,10 @@ class ModuleContainer extends Container {
     }
 
     getLayerOutputs = async (layer=this.state.layer, start=false) => {
+        if(this.state.isLoading){
+            console.log('Loading')
+            return
+        } 
         var isSameLayer = layer.id == this.state.layer.id
         if(start) isSameLayer = false
         var last = isSameLayer ? this.state.last + 64 : 0
@@ -54,6 +58,10 @@ class ModuleContainer extends Container {
     }
 
     async getVisualisations() {
+        if(this.state.isLoading){
+            console.log('Loading')
+            return
+        } 
         await this.setState({ isLoading: true })
 
         const res = await axios.get(api.GET_VISUALISATIONS)
@@ -63,6 +71,11 @@ class ModuleContainer extends Container {
     }
 
     async setVisualisationsSettings(data){
+        console.log('PORCODIO')
+        if(this.state.isLoading){
+            console.log('Loading')
+            return
+        } 
         await this.setState({ isLoading: true })
 
         const res = await axios.put(api.PUT_VISUALISATIONS, data)

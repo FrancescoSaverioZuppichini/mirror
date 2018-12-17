@@ -1,7 +1,7 @@
 import torch
 
 from mirror import mirror
-from mirror.visualisations.GradCam import GradCamFunctional
+from mirror.visualisations.GradCam import GradCam
 
 from PIL import Image
 
@@ -15,7 +15,7 @@ device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 # create a model
 model = resnet18(pretrained=True)
 
-cat = Image.open("/Users/vaevictis/Documents/Project/mirror/cat.jpg")
+cat = Image.open("/home/francesco/Documents/mirror/cat.jpg")
 # resize the image and make it a tensor
 input = Compose([Resize((224,224)), ToTensor()])(cat)
 # add 1 dim for batch
@@ -32,7 +32,7 @@ def imshow(tensor):
     plt.show()
 
 
-vis = GradCamFunctional()
+vis = GradCam()
 img = vis(input, layer, model.to(device), device)
 
 imshow(img)

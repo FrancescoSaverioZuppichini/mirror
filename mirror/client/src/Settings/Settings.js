@@ -69,14 +69,15 @@ class VisualisationSettings extends Component{
         else if(param.type == 'radio') {
             return   (
                 <ListItemText>
-                    <div>{this.props.name}</div>
+                    <div>{this.props.name}
                     <Radio
                     checked={param.value}
-                    onChange={(e, v) => this.update({...param,  ...{value : !param.value}}) }
+                    onClick={(e, v) => this.update({...param,  ...{value : !param.value}}) }
                     value="a"
                     name="radio-button-demo"
                     aria-label="A"
                     />
+                    </div>
                 </ListItemText>)
         }
 
