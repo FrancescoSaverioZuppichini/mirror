@@ -3,7 +3,7 @@
 
 This is a raw beta so expect lots of things to change and improve over time.
 
-![alt](https://github.com/FrancescoSaverioZuppichini/mirror/blob/develop/resources/mirror.gif?raw=true)
+![alt](https://github.com/FrancescoSaverioZuppichini/mirror/blob/master/resources/mirror.gif?raw=true)
 
 ### Getting started
 
