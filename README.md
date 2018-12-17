@@ -40,6 +40,18 @@ It will automatic open a new tab in your browser
 
 ![alt](https://github.com/FrancescoSaverioZuppichini/mirror/blob/develop/resources/mirror.jpg?raw=true)
 
+### Availabe Visualisations
+#### Weights
+![alt](https://github.com/FrancescoSaverioZuppichini/mirror/blob/develop/resources/weights.png?raw=true)
+### Deep Dream
+![alt](https://github.com/FrancescoSaverioZuppichini/mirror/blob/develop/resources/deepdream.png?raw=true)
+#### Back Prop / Guide Back Prop
+By clicking on the radio button 'guide', all the relus negative output will be set to zero producing a nicer looking image
+![alt](https://github.com/FrancescoSaverioZuppichini/mirror/blob/develop/resources/backprop.png?raw=true)
+### Grad Cam / Guide Grad Cam
+- [ ] Add text field for class
+- [ ] 
+![alt](https://github.com/FrancescoSaverioZuppichini/mirror/blob/develop/resources/grad_cam.png?raw=true)
 ### Create a Visualisation
 
 You can find an example below
@@ -77,12 +89,13 @@ The `init_params`  function returns a dictionary of options that will be showed 
 ### TODO
 - [x] Cache reused layer 
 - [x] Make a generic abstraction of a visualisation in order to add more features  
-- [ ] Add more options for the parameters (dropdown, text)
+- [x] Add dropdown as parameter
+- [ ] Add text field
 - [ ] Support multiple inputs
 - [ ] Support multiple models
 - Add all visualisation present here https://github.com/utkuozbulak/pytorch-cnn-visualizations
-    * [ ] [Gradient visualization with vanilla backpropagation](#gradient-visualization)
-    * [ ] [Gradient visualization with guided backpropagation](#gradient-visualization) [1]
+    * [x] [Gradient visualization with vanilla backpropagation](#gradient-visualization)
+    * [x] [Gradient visualization with guided backpropagation](#gradient-visualization) [1]
     * [ ] [Gradient visualization with saliency maps](#gradient-visualization) [4]
     * [ ] [Gradient-weighted [3] class activation mapping](#gradient-visualization) [2] 
     * [ ] [Guided, gradient-weighted class activation mapping](#gradient-visualization) [3]
@@ -91,3 +104,4 @@ The `init_params`  function returns a dictionary of options that will be showed 
     * [ ] [Inverted image representations](#inverted-image-representations) [5]
     * [x] [Deep dream](#deep-dream) [10]
     * [ ] [Class specific image generation](#class-specific-image-generation) [4]
+    * [x] [Grad Cam](https://arxiv.org/abs/1610.02391)
