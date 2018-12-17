@@ -50,6 +50,7 @@ By clicking on the radio button 'guide', all the relus negative output will be s
 ![alt](https://github.com/FrancescoSaverioZuppichini/mirror/blob/develop/resources/backprop.png?raw=true)
 ### Grad Cam / Guide Grad Cam
 - [ ] Add text field for class
+- [ ] 
 ![alt](https://github.com/FrancescoSaverioZuppichini/mirror/blob/develop/resources/grad_cam.png?raw=true)
 ### Create a Visualisation
 
