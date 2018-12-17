@@ -18,8 +18,23 @@ import Radio from '@material-ui/core/Radio';
 import { withStyles } from '@material-ui/core/styles';
 import {debounce} from 'throttle-debounce';
 
+import Button from '@material-ui/core/Button';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 
 class VisualisationSettings extends Component{
+    state = {
+        anchorEl: null,
+    }
+    
+    handleMenuClick = event => {
+        this.setState({ anchorEl: event.currentTarget })
+    }
+
+    handleClose = (param, value) => {
+        this.setState({ anchorEl: null })
+        this.update({...param,  ...{value }})
+    }
 
     update = (value) => {
         var param = {...this.props.param, ...value}
@@ -51,17 +66,45 @@ class VisualisationSettings extends Component{
                 </ListItemText>)
         }
 
-        if(param.type == 'radio') {
+        else if(param.type == 'radio') {
             return   (
                 <ListItemText>
-                    <div>{this.props.name}</div>
+                    <div>{this.props.name}
                     <Radio
                     checked={param.value}
-                    onChange={(e, v) => this.update({...param,  ...{value : !param.value}}) }
+                    onClick={(e, v) => this.update({...param,  ...{value : !param.value}}) }
                     value="a"
                     name="radio-button-demo"
                     aria-label="A"
                     />
+                    </div>
+                </ListItemText>)
+        }
+
+        else if(param.type == 'menu') {
+            var { items, value } = param
+            var { anchorEl} = this.state
+
+            return   (
+                <ListItemText>
+                  <div>
+                    {this.props.name}
+                    <Button
+                    aria-owns={anchorEl ? `${this.props.name}-menu` : undefined}
+                    aria-haspopup="true"
+                    onClick={this.handleMenuClick}
+                    >
+                    {value}
+                    </Button>
+                    <Menu
+                    id={`${this.props.name}-menu`}
+                    anchorEl={anchorEl}
+                    open={Boolean(anchorEl)}
+                    onClose={this.handleClose}
+                    >
+                    {items.map(item => (<MenuItem onClick={() => this.handleClose(param, item)}>{item}</MenuItem>))}
+                    </Menu>
+                </div>
                 </ListItemText>)
         }
     }
