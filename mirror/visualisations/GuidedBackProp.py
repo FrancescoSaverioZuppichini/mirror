@@ -73,11 +73,19 @@ class BackPropVis(Visualisation):
 
     def __call__(self, input_image, layer):
         first_layer = self.tracer.operations[0][0]
+        target_class = self.params['class']['value']
+        if target_class is not None: target_class = int(target_class)
         return self.vis(input_image, layer, self.module, self.device, first_layer,
-                        self.params['guide']['value'])
+                        self.params['guide']['value'],
+                        target_class)
 
     def init_params(self):
         return {'guide': {'type': 'radio',
                           'value': True
-                          }
+                          },
+                'class': {
+                    'type': 'textfield',
+                    'label': 'id',
+                    'value': None
                 }
+            }

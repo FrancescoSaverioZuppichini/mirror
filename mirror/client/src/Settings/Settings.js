@@ -114,7 +114,7 @@ class VisualisationSettings extends Component{
                 <TextField
                 label={param.label}
                 value={this.state.name}
-                onChange={(e) => this.update({...param,  ...{value : e.target.value}}) }
+                onChange={(e) => debounce(300, this.update({...param,  ...{value : e.target.value}}))}
                 margin="normal"
                 />
             </ListItemText>)

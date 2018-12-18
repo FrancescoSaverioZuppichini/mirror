@@ -96,9 +96,11 @@ class GradCamVis(Visualisation):
         return 'Grad cam'
 
     def __call__(self, input_image, layer):
+        target_class = self.params['class']['value']
+        if target_class is not None: target_class = int(target_class)
         return self.vis(input_image, layer, self.module, self.device,
                         self.params['guide']['value'],
-                        int(self.params['class']['value']))
+                        target_class)
 
     def init_params(self):
         return {'guide': {'type': 'radio',

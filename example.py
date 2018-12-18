@@ -9,7 +9,7 @@ from torchvision.transforms import ToTensor, Resize, Compose
 # create a model
 model = alexnet(pretrained=True)
 # get an image
-cat = Image.open("./cat.jpg")
+cat = Image.open("/Users/vaevictis/Desktop/can-cats-eat-dog-food-header.jpg")
 # resize the image and make it a tensor
 input = Compose([Resize((224,224)), ToTensor()])(cat)
 # add 1 dim for batch
