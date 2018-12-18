@@ -21,6 +21,7 @@ import {debounce} from 'throttle-debounce';
 import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import TextField from '@material-ui/core/TextField';
 
 class VisualisationSettings extends Component{
     state = {
@@ -106,6 +107,17 @@ class VisualisationSettings extends Component{
                     </Menu>
                 </div>
                 </ListItemText>)
+        }
+        else if(param.type == 'textfield') {
+            return (
+            <ListItemText>
+                <TextField
+                label={param.label}
+                value={this.state.name}
+                onChange={(e) => this.update({...param,  ...{value : e.target.value}}) }
+                margin="normal"
+                />
+            </ListItemText>)
         }
     }
 

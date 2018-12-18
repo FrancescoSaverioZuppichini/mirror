@@ -97,10 +97,16 @@ class GradCamVis(Visualisation):
 
     def __call__(self, input_image, layer):
         return self.vis(input_image, layer, self.module, self.device,
-                        self.params['guide']['value'])
+                        self.params['guide']['value'],
+                        int(self.params['class']['value']))
 
     def init_params(self):
         return {'guide': {'type': 'radio',
                           'value': False
+                          },
+                'class': {
+                    'type': 'textfield',
+                    'label': 'id',
+                    'value': None
                           }
                 }
