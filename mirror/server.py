@@ -5,14 +5,14 @@ import torch
 import time
 
 from flask import Flask, request, Response, send_file, jsonify
-from .visualisations import WeightsVisualisation
+from .visualisations import WeightsVis
 from PIL import Image
 import pprint
 from torchvision.transforms import ToPILImage
 from .tree import Tracer
 
 class Builder:
-    default_visualisations = [WeightsVisualisation]
+    default_visualisations = [WeightsVis]
     def __init__(self):
         self.outputs = None
         self.cache = {}

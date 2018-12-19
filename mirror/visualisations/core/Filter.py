@@ -1,6 +1,6 @@
-from .Visualisation import Visualisation
+from mirror.visualisations.Visualisation import Visualisation
 
-from .Visualisation import Visualisation
+from mirror.visualisations.Visualisation import Visualisation
 
 import torch
 import torch.nn as nn

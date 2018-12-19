@@ -5,12 +5,12 @@ import torch
 from torch.nn import ReLU
 from torch.autograd import Variable
 
-from .Visualisation import Visualisation
+from mirror.visualisations.Visualisation import Visualisation
+from mirror.visualisations.core.Base import Base
 
-
-class GradCam:
-
-    def __init__(self):
+class GradCam(Base):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.handles = []
         self.gradients = None
         self.conv_outputs = None
@@ -38,29 +38,29 @@ class GradCam:
     def clean(self):
         [h.remove() for h in self.handles]
 
-    def __call__(self, input_image, layer, module, device, guide=False, target_class=None):
+    def __call__(self, input_image, layer, guide=False, target_class=None):
         self.clean()
         self.store_outputs_and_grad(layer)
-        if guide: self.guide(module)
+        if guide: self.guide(self.module)
 
-        input_var = Variable(input_image, requires_grad=True).to(device)
-        predictions = module(input_var)
+        input_var = Variable(input_image, requires_grad=True).to(self.device)
+        predictions = self.module(input_var)
 
         if target_class == None: _, target_class = torch.max(predictions, dim=1)
 
         print(target_class)
 
-        target = torch.zeros(predictions.size()).to(device)
+        target = torch.zeros(predictions.size()).to(self.device)
         target[0][target_class] = 1
 
-        module.zero_grad()
+        self.module.zero_grad()
         predictions.backward(gradient=target, retain_graph=True)
 
         with torch.no_grad():
             avg_channel_grad = self.gradients.data.squeeze().mean(1).mean(1)
             outputs = self.conv_outputs.squeeze()
 
-            cam = torch.ones(outputs.shape[1:]).to(device)
+            cam = torch.ones(outputs.shape[1:]).to(self.device)
 
             for i, w in enumerate(avg_channel_grad):
                 cam += w * outputs[i, :, :]
@@ -86,29 +86,3 @@ class GradCam:
         return img.unsqueeze(0)
 
 
-class GradCamVis(Visualisation):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.vis = GradCam()
-
-    @property
-    def name(self):
-        return 'Grad cam'
-
-    def __call__(self, input_image, layer):
-        target_class = self.params['class']['value']
-        if target_class is not None: target_class = int(target_class)
-        return self.vis(input_image, layer, self.module, self.device,
-                        self.params['guide']['value'],
-                        target_class)
-
-    def init_params(self):
-        return {'guide': {'type': 'radio',
-                          'value': False
-                          },
-                'class': {
-                    'type': 'textfield',
-                    'label': 'id',
-                    'value': None
-                          }
-                }

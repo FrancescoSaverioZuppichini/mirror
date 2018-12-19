@@ -5,13 +5,11 @@ from torch.autograd import Variable
 from torchvision import transforms
 
 from PIL import Image, ImageFilter, ImageChops
+from .Base import Base
 
-from .Visualisation import Visualisation
-
-
-class DeepDream():
-    def __init__(self, device, module):
-        self.device, self.module = device, module
+class DeepDream(Base):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.trace = (None, None, None)
 
         self.transformMean = [0.485, 0.456, 0.406]
@@ -96,8 +94,8 @@ class DeepDream():
 
         return self.step(image, steps=8, save=top == n + 1)
 
-    def __call__(self, inputs, layer, device, octaves=6, scale_factor=0.7, lr=0.1):
-        self.layer, self.lr, self.device = layer, lr, device
+    def __call__(self, inputs, layer, octaves=6, scale_factor=0.7, lr=0.1):
+        self.layer, self.lr = layer, lr
         self.handle = self.register_hooks()
         self.module.zero_grad()
         dd = self.deep_dream(inputs, octaves,
@@ -106,47 +104,3 @@ class DeepDream():
         self.handle.remove()
 
         return dd.unsqueeze(0)
-
-
-class DeepDreamVis(Visualisation):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.vis = DeepDream(self.device, self.module)
-
-    @property
-    def name(self):
-        return 'Deep dream'
-
-    def __call__(self, input_image, layer):
-        return self.vis(input_image, layer,
-                        self.device,
-                        self.params['octaves']['value'],
-                        self.params['scale']['value'],
-                        self.params['lr']['value'])
-
-    def init_params(self):
-        return {'lr': {
-            'type': 'slider',
-            'min': 0.001,
-            'max': 1,
-            'value': 0.1,
-            'step': 0.001,
-            'params': {}
-        },
-            'octaves': {
-                'type': 'slider',
-                'min': 1,
-                'max': 10,
-                'value': 4,
-                'step': 1,
-                'params': {}
-            },
-            'scale': {
-                'type': 'slider',
-                'min': 0.1,
-                'max': 1,
-                'value': 0.7,
-                'step': 0.1,
-                'params': {}
-            }
-        }

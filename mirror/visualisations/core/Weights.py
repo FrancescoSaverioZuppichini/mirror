@@ -1,15 +1,15 @@
-from .Visualisation import Visualisation
+from mirror.visualisations.Visualisation import Visualisation
+from .Base import Base
 
-class WeightsVisualisation(Visualisation):
+class Weights(Base):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        
         self.layer2values = {}
 
     def hook(self, module, input, output):
         self.layer2values[module] = input, output
 
-    def __call__(self, inputs, layer):
+    def __call__(self, inputs, layer, *args, **kwargs):
         for m in self.module.modules():
             m.register_forward_hook(self.hook)
         # additional cache, we won't have to run again the input through the model
@@ -22,8 +22,3 @@ class WeightsVisualisation(Visualisation):
         output = output.view(c, b, h, w)
 
         return output
-
-    @property
-    def name(self):
-        return 'weights'
-

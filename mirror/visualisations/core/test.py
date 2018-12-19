@@ -1,11 +1,10 @@
 import torch
 
-from mirror import mirror
-from mirror.visualisations.GradCam import GradCam
+from mirror.visualisations.core import *
 
 from PIL import Image
 
-from torchvision.models import resnet101, resnet18, vgg16, alexnet
+from torchvision.models import resnet18, alexnet
 from torchvision.transforms import ToTensor, Resize, Compose
 
 import matplotlib.pyplot as plt
@@ -13,7 +12,7 @@ import matplotlib.pyplot as plt
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 # create a model
-model = resnet18(pretrained=True)
+model = alexnet(pretrained=True)
 
 cat = Image.open("/home/francesco/Documents/mirror/cat.jpg")
 # resize the image and make it a tensor
@@ -22,17 +21,21 @@ input = Compose([Resize((224,224)), ToTensor()])(cat)
 input = input.unsqueeze(0)
 # call mirror with the input and the model
 layers = list(model.modules())
-layer = layers[50]
+layer = layers[1][0]
 print(layer)
 
 def imshow(tensor):
     tensor = tensor.squeeze()
-    img = tensor.permute(1, 2, 0).cpu().numpy()
-    plt.imshow(img)
+    print(tensor.shape)
+    if len(tensor.shape) > 2: tensor = tensor.permute(1, 2, 0)
+    img = tensor.cpu().numpy()
+    plt.imshow(img, cmap='gray')
     plt.show()
 
 
-vis = GradCam()
-img = vis(input, layer, model.to(device), device)
+vis = BackProp(model.to(device), device)
+img = vis(input.to(device), layer, 1, guide=True, target_class=283)
 
-imshow(img)
+print(img.shape)
+with torch.no_grad():
+    imshow(img[0])
