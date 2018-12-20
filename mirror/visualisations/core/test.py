@@ -21,7 +21,7 @@ input = Compose([Resize((224,224)), ToTensor()])(cat)
 input = input.unsqueeze(0)
 # call mirror with the input and the model
 layers = list(model.modules())
-layer = layers[1][0]
+layer = layers[1][2]
 print(layer)
 
 def imshow(tensor):
@@ -33,8 +33,8 @@ def imshow(tensor):
     plt.show()
 
 
-vis = BackProp(model.to(device), device)
-img = vis(input.to(device), layer, 1, guide=True, target_class=283)
+vis = DeepDream(model.to(device), device)
+img = vis(input.to(device), layer, octaves=4)
 
 print(img.shape)
 with torch.no_grad():

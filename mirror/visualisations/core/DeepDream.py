@@ -7,25 +7,12 @@ from torchvision import transforms
 from PIL import Image, ImageFilter, ImageChops
 from .Base import Base
 
+from mirror.visualisations.core.utils import image_net_postprocessing, \
+    image_net_preprocessing
+
 class DeepDream(Base):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.trace = (None, None, None)
-
-        self.transformMean = [0.485, 0.456, 0.406]
-        self.transformStd = [0.229, 0.224, 0.225]
-
-        self.transform_preprocess = transforms.Compose([
-            transforms.Normalize(
-                mean=self.transformMean,
-                std=self.transformStd
-            )
-        ])
-
-        self.mean = torch.Tensor(self.transformStd).to(self.device)
-        self.std = torch.Tensor(self.transformMean).to(self.device)
-
-        self.out = None
         self.handle = None
 
     def register_hooks(self):
@@ -44,13 +31,10 @@ class DeepDream(Base):
 
         return self.layer.register_forward_hook(hook)
 
-    def toImage(self, input):
-        return input * self.std + self.mean
-
     def step(self, image, steps=5, save=False):
 
         self.module.zero_grad()
-        image_pre = self.transform_preprocess(image.squeeze().cpu()).to(self.device).unsqueeze(0)
+        image_pre = image_net_preprocessing(image.squeeze().cpu()).to(self.device).unsqueeze(0)
         self.image_var = Variable(image_pre, requires_grad=True).to(self.device)
 
         self.optimizer = torch.optim.Adam([self.image_var], lr=self.lr)
@@ -64,10 +48,11 @@ class DeepDream(Base):
         dreamed = self.image_var.data.squeeze()
         c, w, h = dreamed.shape
 
-        dreamed = dreamed.view((w, h, c))
+        # dreamed = dreamed.view((w, h, c))
+        dreamed = image_net_postprocessing(dreamed.cpu()).to(self.device)
+        # dreamed = dreamed * self.std + self.mean
         dreamed = torch.clamp(dreamed, 0.0, 1.0)
-        dreamed = dreamed * self.std + self.mean
-        dreamed = dreamed.view((c, w, h))
+        # dreamed = dreamed.view((c, w, h))
 
         del self.image_var, image_pre
 
@@ -98,6 +83,7 @@ class DeepDream(Base):
         self.layer, self.lr = layer, lr
         self.handle = self.register_hooks()
         self.module.zero_grad()
+        
         dd = self.deep_dream(inputs, octaves,
                              top=octaves,
                              scale_factor=scale_factor)
