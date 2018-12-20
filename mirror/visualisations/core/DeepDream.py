@@ -83,7 +83,7 @@ class DeepDream(Base):
         self.layer, self.lr = layer, lr
         self.handle = self.register_hooks()
         self.module.zero_grad()
-        
+
         dd = self.deep_dream(inputs, octaves,
                              top=octaves,
                              scale_factor=scale_factor)
