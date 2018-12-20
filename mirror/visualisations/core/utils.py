@@ -1,4 +1,5 @@
 import torch
+import numpy as np
 
 from torchvision.transforms import Compose, Normalize
 
@@ -33,4 +34,23 @@ image_net_postprocessing = Compose([
         mean=image_net_mean,
         std=image_net_std)
 ])
+
+def convert_to_grayscale(cv2im):
+    """
+        Converts 3d image to grayscale
+
+    Args:
+        cv2im (numpy arr): RGB image with shape (D,W,H)
+
+    returns:
+        grayscale_im (numpy_arr): Grayscale image with shape (1,W,D)
+
+    credits to https://github.com/utkuozbulak/pytorch-cnn-visualizations
+    """
+    grayscale_im = np.sum(np.abs(cv2im), axis=0)
+    im_max = np.percentile(grayscale_im, 99)
+    im_min = np.min(grayscale_im)
+    grayscale_im = (np.clip((grayscale_im - im_min) / (im_max - im_min), 0, 1))
+    grayscale_im = np.expand_dims(grayscale_im, axis=0)
+    return grayscale_im
 

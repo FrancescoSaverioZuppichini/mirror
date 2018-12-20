@@ -1,11 +1,9 @@
 import cv2
 import numpy as np
-
 import torch
+
 from torch.nn import ReLU
 from torch.autograd import Variable
-
-from mirror.visualisations.Visualisation import Visualisation
 from mirror.visualisations.core.Base import Base
 
 class GradCam(Base):

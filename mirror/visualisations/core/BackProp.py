@@ -8,10 +8,6 @@ from torch.autograd import Variable
 from torchvision.transforms import *
 from mirror.visualisations.Visualisation import Visualisation
 
-from mirror.visualisations.core.misc_functions import (convert_to_grayscale)
-
-from .misc_functions import *
-
 class BackProp(Base):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -57,9 +53,9 @@ class BackProp(Base):
         for _ in range(50):
             _ = self.module(out_image.unsqueeze(0))
 
-        with torch.no_grad():
+        # with torch.no_grad():
         #     pass
-            image = torch.from_numpy(recreate_image(out_image.grad.data.cpu()))
+        #     image = torch.from_numpy(recreate_image(out_image.grad.data.cpu()))
         # c, w, h = out_image.shape
         #
         # out_image = out_image.view((w, h, c))
@@ -70,5 +66,5 @@ class BackProp(Base):
         self.clean()
         # image = out_image.grad.data.cpu()
 
-        return image.unsqueeze(0)
+        # return image.unsqueeze(0)
 

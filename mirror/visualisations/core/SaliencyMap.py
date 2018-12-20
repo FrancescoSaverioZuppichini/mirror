@@ -1,14 +1,10 @@
 import torch
 
 from .Base import Base
-
 from torch.nn import ReLU
 from torch.autograd import Variable
-
 from torchvision.transforms import *
-from mirror.visualisations.Visualisation import Visualisation
-
-from mirror.visualisations.core.misc_functions import (convert_to_grayscale)
+from mirror.visualisations.core.utils import convert_to_grayscale
 
 class SaliencyMap(Base):
     """

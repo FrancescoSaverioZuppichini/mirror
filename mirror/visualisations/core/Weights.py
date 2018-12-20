@@ -1,4 +1,3 @@
-from mirror.visualisations.Visualisation import Visualisation
 from .Base import Base
 
 class Weights(Base):
