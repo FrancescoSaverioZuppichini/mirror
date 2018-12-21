@@ -1,6 +1,6 @@
 from mirror.visualisations.Visualisation import Visualisation
 
-from .core import *
+from .core.core import *
 
 class BackPropVis(Visualisation):
     def __init__(self, *args, **kwargs):
