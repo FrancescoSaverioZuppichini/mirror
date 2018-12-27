@@ -31,6 +31,7 @@ class Builder:
 
         visualisations = [*self.default_visualisations, *visualisations]
         # instantiate visualisations
+        model.eval()
         self.visualisations= [v(model, tracer, self.device) for v in visualisations]
 
         self.name2visualisations = { v.name : v for v in self.visualisations}
@@ -101,7 +102,7 @@ class Builder:
                     layer_cache[layer] = self.current_vis(input_clone, layer)
                     del input_clone
                 else: print('cached')
-                self.outputs = layer_cache[layer]
+                self.outputs, _ = layer_cache[layer]
                 if len(self.outputs.shape) < 3:  raise ValueError
 
                 last = int(request.args['last'])
