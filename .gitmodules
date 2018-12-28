@@ -1,0 +1,3 @@
+[submodule "mirror/visualisations/core"]
+	path = mirror/visualisations/core
+	url = https://github.com/FrancescoSaverioZuppichini/cnn-visualisations.git

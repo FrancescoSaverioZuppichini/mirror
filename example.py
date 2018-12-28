@@ -1,8 +1,6 @@
 from mirror import mirror
 from mirror.visualisations import *
-
 from PIL import Image
-
 from torchvision.models import resnet101, resnet18, vgg16, alexnet
 from torchvision.transforms import ToTensor, Resize, Compose
 
