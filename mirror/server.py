@@ -31,9 +31,8 @@ class Builder:
 
         tracer = Tracer(module=model)
         tracer(self.current_input)
-
-        visualisations = [*self.default_visualisations, *visualisations]
         # instantiate visualisations
+        visualisations = [*self.default_visualisations, *visualisations]
         model.eval()
         self.visualisations= [v(model, tracer, self.device) for v in visualisations]
 
@@ -55,7 +54,7 @@ class Builder:
 
             return response
 
-        @app.route('/api/inputs', methods=['GET'])
+        @app.route('/api/inputs', methods=['GET', 'PUT'])
         def api_inputs():
             if request.method == 'GET':
                 self.outputs = self.inputs
@@ -69,13 +68,13 @@ class Builder:
                 response = jsonify({'links': response, 'next': False })
 
             elif request.method == 'PUT':
-                print(request.data)
                 data = json.loads(request.data.decode())
 
-                input_index = request.form['input']
+                input_index = data['id']
 
                 self.current_input = self.inputs[input_index].unsqueeze(0).to(self.device)
-                response = Response(status=200, response=input_index)
+
+                response = jsonify(data)
 
             return response
 
@@ -121,9 +120,9 @@ class Builder:
 
                 layer = tracer.idx_to_value[id].v
 
-                if input not in self.current_vis.cache: self.current_vis.cache[input] = {}
+                if self.current_input not in self.current_vis.cache: self.current_vis.cache[self.current_input] = {}
 
-                layer_cache = self.current_vis.cache[input]
+                layer_cache = self.current_vis.cache[self.current_input]
                 # always clone the input to avoid being modified
                 input_clone = self.current_input.clone()
 
@@ -131,13 +130,15 @@ class Builder:
                     layer_cache[layer] = self.current_vis(input_clone, layer)
                     del input_clone
                 else: print('cached')
+
                 self.outputs, _ = layer_cache[layer]
+
                 if len(self.outputs.shape) < 3:  raise ValueError
 
                 last = int(request.args['last'])
                 max = min((last + MAX_LINKS_EVERY_REQUEST), self.outputs.shape[0])
 
-                response = ['/api/model/image/{}/{}/{}/{}/{}'.format(hash(input),
+                response = ['/api/model/image/{}/{}/{}/{}/{}'.format(hash(self.current_input),
                                                                   hash(self.current_vis),
                                                                   hash(time.time()),
                                                                   id,

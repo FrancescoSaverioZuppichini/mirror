@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 
-const Input = ({module, src}) => {
+const Input = ({module, id, src}) => {
     return (
-        <img src={src}></img>
+        <img src={src} onClick={() => module.setInput(id)}></img>
     )
 }
 
@@ -14,8 +14,8 @@ export default class Inputs extends Component {
     render() {
         return (
             <div>
-            {this.props.module.state.inputs.map(el => 
-                (<Input src={el} {...this.props}></Input>))
+            {this.props.module.state.inputs.map((src, id) => 
+                (<Input src={src} id={id} {...this.props} key={id}></Input>))
                 }
             </div>   
         )

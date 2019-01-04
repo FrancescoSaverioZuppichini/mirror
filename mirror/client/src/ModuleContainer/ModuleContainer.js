@@ -97,6 +97,11 @@ class ModuleContainer extends Container {
         await this.setState({ inputs :res.data.links })
     }
 
+    async setInput(id){
+        const res = await axios.put(api.PUT_INPUTS, {id})
+        await this.getLayerOutputs(this.state.layer, true)
+        console.log(res)
+    }
 
 }
 
