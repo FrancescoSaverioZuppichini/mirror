@@ -15,7 +15,8 @@ class ModuleContainer extends Container {
         layer: { name : ''},
         last: 0,
         next: false,
-        settings: { size: 50 }
+        settings: { size: 50 },
+        inputs: []
     }
 
     async getTree() {
@@ -89,6 +90,11 @@ class ModuleContainer extends Container {
         }
         await this.setState({isLoading: false, currentVisualisation, visualisations })
 
+    }
+
+    async getInputs() {
+        const res = await axios.get(api.GET_INPUTS)
+        await this.setState({ inputs :res.data.links })
     }
 
 

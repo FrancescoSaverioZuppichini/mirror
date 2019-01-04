@@ -19,15 +19,18 @@ class Builder:
         self.visualisations = {}
         self.current_vis = None
         self.device  = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+        self.inputs, self.current_input = [], None
 
-    def build(self, input, model, tracer, visualisations=[]):
-        input = input.to(self.device)
+    def build(self, inputs, model, tracer, visualisations=[]):
+        if len(inputs) <= 0: raise ValueError('At least one input is required.')
+
+        self.inputs, self.tracer = inputs, tracer
+        self.current_input = self.inputs[0].unsqueeze(0).to(self.device)
+
         model = model.to(self.device)
 
         tracer = Tracer(module=model)
-        tracer(input)
-
-        self.tracer = tracer
+        tracer(self.current_input)
 
         visualisations = [*self.default_visualisations, *visualisations]
         # instantiate visualisations
@@ -51,6 +54,31 @@ class Builder:
             response = jsonify(model)
 
             return response
+
+        @app.route('/api/inputs', methods=['GET'])
+        def api_inputs():
+            if request.method == 'GET':
+                self.outputs = self.inputs
+
+                response = ['/api/model/image/{}/{}/{}/{}/{}'.format(hash(None),
+                                                                     hash(None),
+                                                                     hash(time.time()),
+                                                                     id,
+                                                                     i) for i in range(len(self.inputs))]
+
+                response = jsonify({'links': response, 'next': False })
+
+            elif request.method == 'PUT':
+                print(request.data)
+                data = json.loads(request.data.decode())
+
+                input_index = request.form['input']
+
+                self.current_input = self.inputs[input_index].unsqueeze(0).to(self.device)
+                response = Response(status=200, response=input_index)
+
+            return response
+
 
         @app.route('/api/model/layer/<id>')
         def api_model_layer(id):
@@ -90,13 +118,14 @@ class Builder:
         @app.route('/api/model/layer/output/<id>')
         def api_model_layer_output(id):
             # try:
+
                 layer = tracer.idx_to_value[id].v
 
                 if input not in self.current_vis.cache: self.current_vis.cache[input] = {}
 
                 layer_cache = self.current_vis.cache[input]
                 # always clone the input to avoid being modified
-                input_clone = input.clone()
+                input_clone = self.current_input.clone()
 
                 if layer not in layer_cache:
                     layer_cache[layer] = self.current_vis(input_clone, layer)

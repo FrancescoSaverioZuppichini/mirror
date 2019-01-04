@@ -19,6 +19,7 @@ import LayerOutputs from './Module/LayerOutputs/LayerOutputs'
 import MoreIcon from '@material-ui/icons/MoreVert';
 
 import Hidden from '@material-ui/core/Hidden';
+import Inputs from './Inputs/Inputs';
 
 const drawerWidth = 300;
 
@@ -135,6 +136,7 @@ class App extends Component {
               <main className={classes.content}>
                 <div className={classes.toolbar} />
                 <LayerOutputs module={module} classes={classes}/>
+                <Inputs module={module}></Inputs>
               </main>
 
                 <Hidden smDown >
@@ -152,8 +154,7 @@ class App extends Component {
                 module={module} 
                 classes={classes}
                 small={true}/>
-                  </Hidden>
-
+              </Hidden>
             </div>
           )}
         </Subscribe>
