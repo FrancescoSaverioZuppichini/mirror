@@ -5,7 +5,7 @@ from .server import Builder
 def mirror(input, model, visualisations=[]):
     builder = Builder()
 
-    app = builder.build(input, model, None, visualisations)
+    app = builder.build(input, model, visualisations)
 
     # webbrowser.open_new('http://localhost:5000')  # opens in default browser
 

@@ -43,7 +43,7 @@ export default class Inputs extends Component {
                     direction="row"
                     justify="center"
                     alignItems="center"
-                    spacing={4}
+                    wrap='nowrap'
                     >
                 {this.props.module.state.inputs.map((src, id) => 
                     (<Input src={src} id={id} {...this.props} key={id}></Input>))

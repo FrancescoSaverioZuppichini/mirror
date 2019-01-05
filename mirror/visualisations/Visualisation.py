@@ -1,6 +1,6 @@
 class Visualisation:
-    def __init__(self, module, tracer, device):
-        self.module, self.tracer, self.device = module, tracer, device
+    def __init__(self, module, device):
+        self.module,  self.device = module, device
         self.outputs = []
         self.params = self.init_params()
         self.properties = self.init_properties()

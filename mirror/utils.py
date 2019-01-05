@@ -1,20 +1,19 @@
-import matplotlib.pyplot as plt
+def module2traced(module, inputs):
+    handles, modules = [], []
 
-def print_layer(x, l):
-    plt.figure(figsize=(18, 16), dpi=80, facecolor='w', edgecolor='k')
+    def trace(module, inputs, outputs):
+        modules.append(module)
 
-    out = x.squeeze()
-    if len(out.shape) < 2: return
+    def traverse(module):
+        for m in module.children():
+            traverse(m)
+        is_leaf = len(list(module.children())) == 0
+        if is_leaf: handles.append(module.register_forward_hook(trace))
 
-    f, w, h = out.shape
+    traverse(module)
 
-    plt.title(l)
+    _ = module(inputs)
 
-    for i, img in enumerate(out):
-        img = img.detach().numpy()
-        plt.subplot(1, 6, i + 1)
-        plt.imshow(img)
-        if i > 4:
-            break
+    [h.remove() for h in handles]
 
-    plt.show()
+    return modules

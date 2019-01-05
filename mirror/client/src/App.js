@@ -85,7 +85,8 @@ const styles = theme => ({
     position: 'fixed',
     bottom: 0,
     width: '100%',
-    left: 0
+    left: 0,
+    overflowY:'scroll'
     // padding: theme.spacing.unit * 2,
   }
   
