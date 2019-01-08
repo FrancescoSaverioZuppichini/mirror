@@ -1,1 +1,2 @@
 include mirror/static/**/*
+include mirror/static/*
