@@ -8,9 +8,6 @@ setup(
      author="Francesco Zuppichini",
      author_email="francesco.zuppichini@gmail.com",
      description="A visualization tool for cnn in Pytorch",
-     package_data={
-            'static': ['*']
-        },
      include_package_data=True,
      url="https://github.com/FrancescoSaverioZuppichini/mirror",
  )
