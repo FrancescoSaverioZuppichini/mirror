@@ -6,7 +6,7 @@ from torchvision.transforms import ToTensor, Resize, Compose
 
 # create a model
 model = resnet18(pretrained=True)
-# get an image
+# open some images
 cat = Image.open("./cat.jpg")
 dog_and_cat  = Image.open("./dog_and_cat.jpg")
 # resize the image and make it a tensor
