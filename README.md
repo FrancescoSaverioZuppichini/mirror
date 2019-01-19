@@ -35,7 +35,7 @@ mirror([to_input(cat), to_input(dog_and_cat)], model, visualisations=[DeepDreamV
 
 It will automatic open a new tab in your browser
 
-![alt](https://github.com/FrancescoSaverioZuppichini/mirror/blob/develop/resources/mirror.png?raw=true)
+![alt](https://github.com/FrancescoSaverioZuppichini/mirror/blob/master/resources/mirror.png?raw=true)
 
 On the left you can see your model tree structure, by clicking on one layer all his children are showed. On the right there are the visualisation settings. You can select your input by clicking on the bottom tab.
 
@@ -43,16 +43,16 @@ On the left you can see your model tree structure, by clicking on one layer all 
 
 ### Available Visualisations
 #### Weights
-![alt](https://github.com/FrancescoSaverioZuppichini/mirror/blob/develop/resources/weights.png?raw=true)
+![alt](https://github.com/FrancescoSaverioZuppichini/mirror/blob/master/resources/weights.png?raw=true)
 ### Deep Dream
-![alt](https://github.com/FrancescoSaverioZuppichini/mirror/blob/develop/resources/deepdream.png?raw=true)
+![alt](https://github.com/FrancescoSaverioZuppichini/mirror/blob/master/resources/deepdream.png?raw=true)
 #### Back Prop / Guide Back Prop
 By clicking on the radio button 'guide', all the relus negative output will be set to zero producing a nicer looking image
-![alt](https://github.com/FrancescoSaverioZuppichini/mirror/blob/develop/resources/backprop.png?raw=true)
+![alt](https://github.com/FrancescoSaverioZuppichini/mirror/blob/master/resources/backprop.png?raw=true)
 ### Grad Cam / Guide Grad Cam
 - [ ] Add text field for class
 - [ ] 
-![alt](https://github.com/FrancescoSaverioZuppichini/mirror/blob/develop/resources/grad_cam.png?raw=true)
+![alt](https://github.com/FrancescoSaverioZuppichini/mirror/blob/master/resources/grad_cam.png?raw=true)
 ### Create a Visualisation
 
 You can find an example below
@@ -81,7 +81,7 @@ class DummyVisualisation(Visualisation):
 
 ```
 
-![alt](https://github.com/FrancescoSaverioZuppichini/mirror/blob/develop/resources/dummy.jpg?raw=true)
+![alt](https://github.com/FrancescoSaverioZuppichini/mirror/blob/master/resources/dummy.jpg?raw=true)
 
 The `__call__` function is called each time you click a layer or change a value in the options on the right.
 
