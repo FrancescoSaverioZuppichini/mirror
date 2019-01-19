@@ -39,7 +39,7 @@ It will automatic open a new tab in your browser
 
 On the left you can see your model tree structure, by clicking on one layer all his children are showed. On the right there are the visualisation settings. You can select your input by clicking on the bottom tab.
 
-![alt](https://github.com/FrancescoSaverioZuppichini/mirror/blob/develop/resources/inputs.png?raw=true)
+![alt](https://raw.githubusercontent.com/FrancescoSaverioZuppichini/mirror/master/resources/inputs.png)
 
 ### Available Visualisations
 #### Weights
