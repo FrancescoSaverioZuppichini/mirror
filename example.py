@@ -6,11 +6,10 @@ from torchvision.transforms import ToTensor, Resize, Compose
 
 # create a model
 model = vgg16(pretrained=True)
-# get an image
+# open some images
 cat = Image.open("./cat.jpg")
+dog_and_cat  = Image.open("./dog_and_cat.jpg")
 # resize the image and make it a tensor
-input = Compose([Resize((224,224)), ToTensor()])(cat)
-# add 1 dim for batch
-input = input.unsqueeze(0)
-# call mirror with the input and the model
-mirror(input, model, visualisations=[DeepDreamVis, BackPropVis, GradCamVis])
+to_input = Compose([Resize((224,224)), ToTensor()])
+# call mirror with the inputs and the model
+mirror([to_input(cat), to_input(dog_and_cat)], model, visualisations=[DeepDreamVis, BackPropVis, GradCamVis])

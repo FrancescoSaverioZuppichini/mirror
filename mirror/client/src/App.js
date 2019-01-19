@@ -19,6 +19,7 @@ import LayerOutputs from './Module/LayerOutputs/LayerOutputs'
 import MoreIcon from '@material-ui/icons/MoreVert';
 
 import Hidden from '@material-ui/core/Hidden';
+import Inputs from './Inputs/Inputs';
 
 const drawerWidth = 300;
 
@@ -57,6 +58,7 @@ const styles = theme => ({
     // height: '100%',
     backgroundColor: theme.palette.background.default,
     padding: theme.spacing.unit * 3,
+    marginBottom: '102px'
     // minWidth: 0, // So the Typography noWrap works
   },
   toolbar: theme.mixins.toolbar,
@@ -77,7 +79,17 @@ const styles = theme => ({
   },
 
   layersOuput : {
+  },
+
+  inputsBar : {
+    position: 'fixed',
+    bottom: 0,
+    width: '100%',
+    left: 0,
+    overflowY:'scroll'
+    // padding: theme.spacing.unit * 2,
   }
+  
 })
 
 function MyAppBar({ module, classes }) {
@@ -135,8 +147,8 @@ class App extends Component {
               <main className={classes.content}>
                 <div className={classes.toolbar} />
                 <LayerOutputs module={module} classes={classes}/>
+                <Inputs module={module} classes={classes}></Inputs>
               </main>
-
                 <Hidden smDown >
               <Settings
                 toogle={module.toogleDrawer}
@@ -152,8 +164,7 @@ class App extends Component {
                 module={module} 
                 classes={classes}
                 small={true}/>
-                  </Hidden>
-
+              </Hidden>
             </div>
           )}
         </Subscribe>
