@@ -12,10 +12,11 @@ class BackPropVis(Visualisation):
         return 'Backprop'
 
     def __call__(self, input_image, layer):
-        first_layer = self.tracer.operations[0][0]
         target_class = self.params['class']['value']
-        if target_class is not None: target_class = int(target_class)
-        return self.vis(input_image, layer,
+        try:
+            target_class = int(target_class)
+        except: target_class = None
+        return self.vis(input_image, None,
                         self.params['guide']['value'],
                         target_class=target_class)
 
@@ -42,7 +43,10 @@ class GradCamVis(Visualisation):
 
     def __call__(self, input_image, layer):
         target_class = self.params['class']['value']
-        if target_class is not None: target_class = int(target_class)
+        try:
+            target_class = int(target_class)
+        except: target_class = None
+
         return self.vis(input_image, layer,
                         self.params['guide']['value'],
                         target_class)
