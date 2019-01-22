@@ -28,8 +28,14 @@ class Builder:
         if len(inputs) <= 0: raise ValueError('At least one input is required.')
 
         self.inputs, self.model = inputs, model
+        
+        #Iterate bag of inputs
+        for i in range(len(self.inputs)):
+            # Add mini-batch dim if not exist
+            if len(self.inputs[i].size()) == 1:
+                self.inputs[i] = self.inputs[i].unsqueeze(0).to(self.device)
 
-        self.current_input = self.inputs[0].unsqueeze(0).to(self.device) # add 1 dim for batch
+        self.current_input = self.inputs
         model = model.to(self.device)
         model.eval()
         # instantiate a Tracer object to create a graph from the model
