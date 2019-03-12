@@ -67,6 +67,6 @@ class GradCam(Base):
 
         self.clean()
 
-        return image_with_heatmap.unsqueeze(0), { 'prediction': target_class }
+        return image_with_heatmap.unsqueeze(0), { 'prediction': target_class, 'cam' : cam }
 
 
