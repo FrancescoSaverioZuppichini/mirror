@@ -39,7 +39,7 @@ image_net_postprocessing = Compose([
 ])
 
 def tensor2cam(image, cam):
-    image_with_heatmap = image2cam(image.squeeze().permute(1,2,0).cpu().numpy(),
+    image_with_heatmap = image2cam(image.squeeze(0).permute(1,2,0).cpu().numpy(),
               cam.detach().cpu().numpy())
 
     return torch.from_numpy(image_with_heatmap).permute(2,0,1)
