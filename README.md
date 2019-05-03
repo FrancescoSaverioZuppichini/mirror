@@ -137,5 +137,8 @@ mv ./build/static ../ && cp ./build/* ../static/
     * [x] [Deep dream](#deep-dream) [10]
     * [ ] [Class specific image generation](#class-specific-image-generation) [4]
     * [x] [Grad Cam](https://arxiv.org/abs/1610.02391)
-- [] Add a `output_transformation` params for each visualisation to allow better customisation 
-- [] Add a `input_transformation` params for each visualisation to allow better customisation 
+- [ ] Add a `output_transformation` params for each visualisation to allow better customisation 
+- [ ] Add a `input_transformation` params for each visualisation to allow better customisation 
+
+### BUGS
+- [ ] Grad-Cam won't work with gray image. Fix is easy but I have no time now
