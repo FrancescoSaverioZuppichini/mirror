@@ -1,1 +1,1 @@
-from .app import mirror
+from .main import mirror

@@ -1,11 +1,9 @@
 import webbrowser
 
-from .server import Builder
+from .App import App
 
 def mirror(input, model, visualisations=[]):
-    builder = Builder()
-
-    app = builder.build(input, model, visualisations)
+    app = App(input, model, visualisations)
 
     webbrowser.open_new('http://localhost:5000')  # opens in default browser
 

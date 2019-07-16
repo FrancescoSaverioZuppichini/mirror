@@ -1,62 +1,43 @@
 import json
 import io
-import numpy as np
 import torch
 import time
 
 from flask import Flask, request, Response, send_file, jsonify
-from .visualisations import WeightsVis
-from PIL import Image
-import pprint
 from torchvision.transforms import ToPILImage
-from .tree import Tracer
-from .utils import module2traced
+from .visualisations import WeightsVis
+from .ModuleTracer import ModuleTracer
 
-class Builder:
+class App(Flask):
     default_visualisations = [WeightsVis]
     MAX_LINKS_EVERY_REQUEST = 64
 
-    def __init__(self):
+    def __init__(self, inputs, model, visualisations=[]):
+        super().__init__(__name__)
         self.cache = {} # internal cache used to store the results
         self.outputs = None # holds the current output from a visualisation
-        self.current_vis = None
-        self.current_input = None
-        self.inputs= []
-        self.device  = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-
-    def build(self, inputs, model, visualisations=[]):
         if len(inputs) <= 0: raise ValueError('At least one input is required.')
 
         self.inputs, self.model = inputs, model
+        self.device  = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+        self.current_input = self.inputs[0].unsqueeze(0).to(self.device)  # add 1 dim for batch
+        self.module = model.to(self.device).eval()
+        self.setup_tracer()
+        self.setup_visualisations(visualisations)
 
-        self.current_input = self.inputs[0].unsqueeze(0).to(self.device) # add 1 dim for batch
-        model = model.to(self.device)
-        model.eval()
-        # instantiate a Tracer object to create a graph from the model
-        self.tracer = Tracer(module=model)
-        self.tracer(self.current_input)
-        # instantiate visualisations
-        visualisations = [*self.default_visualisations, *visualisations]
-
-        self.visualisations= [v(model, self.device) for v in visualisations]
-        self.name2visualisations = { v.name : v for v in self.visualisations}
-        self.current_vis =  self.visualisations[0]
-
-        app = Flask(__name__)
-
-        @app.route('/')
+        @self.route('/')
         def root():
-            return app.send_static_file('index.html')
+            return self.send_static_file('index.html')
 
-        @app.route('/api/model', methods=['GET'])
+        @self.route('/api/model', methods=['GET'])
         def api_model():
-            model = self.tracer.serialized
+            model = self.tracer.to_JSON()
 
             response = jsonify(model)
 
             return response
 
-        @app.route('/api/inputs', methods=['GET', 'PUT'])
+        @self.route('/api/inputs', methods=['GET', 'PUT'])
         def api_inputs():
             if request.method == 'GET':
                 self.outputs = self.inputs
@@ -81,14 +62,14 @@ class Builder:
             return response
 
 
-        @app.route('/api/model/layer/<id>')
+        @self.route('/api/model/layer/<id>')
         def api_model_layer(id):
             id = int(id)
-            name = str(self.tracer.idx_to_value[id])
+            name =self.traced[id].name
 
             return Response(response=name)
 
-        @app.route('/api/visualisation', methods=['GET'])
+        @self.route('/api/visualisation', methods=['GET'])
         def api_visualisations():
             serialised = [v.properties for v in self.visualisations]
 
@@ -97,7 +78,7 @@ class Builder:
 
             return response
 
-        @app.route('/api/visualisation', methods=['PUT'])
+        @self.route('/api/visualisation', methods=['PUT'])
         def api_visualisation():
             data = json.loads(request.data.decode())
 
@@ -116,11 +97,11 @@ class Builder:
 
             return response
 
-        @app.route('/api/model/layer/output/<id>')
+        @self.route('/api/model/layer/output/<id>')
         def api_model_layer_output(id):
             try:
 
-                layer = self.tracer.idx_to_value[id].v
+                layer = self.traced[id].module
 
                 if self.current_input not in self.current_vis.cache: self.current_vis.cache[self.current_input] = {}
 
@@ -131,7 +112,7 @@ class Builder:
                 if layer not in layer_cache:
                     layer_cache[layer] = self.current_vis(input_clone, layer)
                     del input_clone
-                else: print('cached')
+                else: print('[INFO] cached')
 
                 self.outputs, _ = layer_cache[layer]
 
@@ -158,7 +139,7 @@ class Builder:
 
             return response
 
-        @app.route('/api/model/image/<input_id>/<vis_id>/<layer_id>/<time>/<output_id>')
+        @self.route('/api/model/image/<input_id>/<vis_id>/<layer_id>/<time>/<output_id>')
         def api_model_layer_output_image(input_id, vis_id, layer_id, time, output_id):
             output_id = int(output_id)
             try:
@@ -172,4 +153,15 @@ class Builder:
             except KeyError:
                 return Response(status=500, response='Index not found.')
 
-        return app
+    def setup_tracer(self):
+        # instantiate a Tracer object and trace one input
+        self.tracer = ModuleTracer(module=self.module)
+        self.tracer(self.current_input)
+        # store the traced graph as a dictionary
+        self.traced = self.tracer.__dict__()
+
+    def setup_visualisations(self, visualisations):
+        visualisations = [*self.default_visualisations, *visualisations]
+        self.visualisations = [v(self.module, self.device) for v in visualisations]
+        self.name2visualisations = {v.name: v for v in self.visualisations}
+        self.current_vis = self.visualisations[0]

@@ -10,6 +10,6 @@ model = vgg16(pretrained=True)
 cat = Image.open("./cat.jpg")
 dog_and_cat  = Image.open("./dog_and_cat.jpg")
 # resize the image and make it a tensor
-to_input = Compose([Resize((224,224)), ToTensor()])
+to_input = Compose([Resize((224,224)),  ToTensor()])
 # call mirror with the inputs and the model
 mirror([to_input(cat), to_input(dog_and_cat)], model, visualisations=[DeepDreamVis, BackPropVis, GradCamVis])
