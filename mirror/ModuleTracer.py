@@ -1,5 +1,6 @@
 import sys
 
+
 class TracedNode():
     def __init__(self, parent=None):
         self.parent = parent
@@ -17,7 +18,7 @@ class TracedNode():
         return str(self.module)
 
     def to_JSON(self):
-        return  { 'id': self.id, 'name' : self.name, 'children' : [child.to_JSON() for child in self.children] }
+        return {'id': self.id, 'name': self.name, 'children': [child.to_JSON() for child in self.children]}
 
     def __dict__(self):
         """
@@ -25,7 +26,8 @@ class TracedNode():
         :return:
         """
         v = {}
-        if len(self.children) <= 0 : v = { self.id : self }
+        if len(self.children) <= 0:
+            v = {self.id: self}
         else:
             for child in self.children:
                 v = {**v, **child.__dict__()}
@@ -36,11 +38,13 @@ class TracedNode():
         self.input = input
         self.output = output
 
+
 class ModuleTracer():
     """
     Hook to each submodule of a module and create a graph of TracedNode in order to store the
     correct execution of an input through the model.
     """
+
     def __init__(self, module):
         super().__init__()
         self.module = module

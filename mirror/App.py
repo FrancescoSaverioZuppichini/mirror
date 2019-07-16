@@ -8,18 +8,19 @@ from torchvision.transforms import ToPILImage
 from .visualisations import WeightsVis
 from .ModuleTracer import ModuleTracer
 
+
 class App(Flask):
     default_visualisations = [WeightsVis]
     MAX_LINKS_EVERY_REQUEST = 64
 
     def __init__(self, inputs, model, visualisations=[]):
         super().__init__(__name__)
-        self.cache = {} # internal cache used to store the results
-        self.outputs = None # holds the current output from a visualisation
+        self.cache = {}  # internal cache used to store the results
+        self.outputs = None  # holds the current output from a visualisation
         if len(inputs) <= 0: raise ValueError('At least one input is required.')
 
         self.inputs, self.model = inputs, model
-        self.device  = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+        self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
         self.current_input = self.inputs[0].unsqueeze(0).to(self.device)  # add 1 dim for batch
         self.module = model.to(self.device).eval()
         self.setup_tracer()
@@ -48,7 +49,7 @@ class App(Flask):
                                                                      id,
                                                                      i) for i in range(len(self.inputs))]
 
-                response = jsonify({'links': response, 'next': False })
+                response = jsonify({'links': response, 'next': False})
 
             elif request.method == 'PUT':
                 data = json.loads(request.data.decode())
@@ -61,11 +62,10 @@ class App(Flask):
 
             return response
 
-
         @self.route('/api/model/layer/<id>')
         def api_model_layer(id):
             id = int(id)
-            name =self.traced[id].name
+            name = self.traced[id].name
 
             return Response(response=name)
 
@@ -73,8 +73,8 @@ class App(Flask):
         def api_visualisations():
             serialised = [v.properties for v in self.visualisations]
 
-            response = jsonify({ 'visualisations': serialised,
-                                   'current': self.current_vis.properties})
+            response = jsonify({'visualisations': serialised,
+                                'current': self.current_vis.properties})
 
             return response
 
@@ -85,7 +85,8 @@ class App(Flask):
             vis_key = data['name']
 
             if vis_key not in self.name2visualisations:
-                response = Response(status=500, response='Visualisation {} not supported or does not exist'.format(vis_key))
+                response = Response(status=500,
+                                    response='Visualisation {} not supported or does not exist'.format(vis_key))
             else:
                 self.current_vis = self.name2visualisations[vis_key]
                 # TODO I should think on a cleaver way to update properties and params
@@ -112,7 +113,8 @@ class App(Flask):
                 if layer not in layer_cache:
                     layer_cache[layer] = self.current_vis(input_clone, layer)
                     del input_clone
-                else: print('[INFO] cached')
+                else:
+                    print('[INFO] cached')
 
                 self.outputs, _ = layer_cache[layer]
 
@@ -122,12 +124,12 @@ class App(Flask):
                 max = min((last + self.MAX_LINKS_EVERY_REQUEST), self.outputs.shape[0])
 
                 response = ['/api/model/image/{}/{}/{}/{}/{}'.format(hash(self.current_input),
-                                                                  hash(self.current_vis),
-                                                                  hash(time.time()),
-                                                                  id,
-                                                                  i) for i in range(last, max)]
+                                                                     hash(self.current_vis),
+                                                                     hash(time.time()),
+                                                                     id,
+                                                                     i) for i in range(last, max)]
 
-                response = jsonify({ 'links' : response, 'next': last + 1< max})
+                response = jsonify({'links': response, 'next': last + 1 < max})
 
 
             except KeyError:
@@ -135,7 +137,7 @@ class App(Flask):
             except ValueError:
                 response = Response(status=404, response='Outputs must be an array of images')
             except StopIteration:
-                response = jsonify({ 'links' : [], 'next': False})
+                response = jsonify({'links': [], 'next': False})
 
             return response
 
