@@ -8,7 +8,7 @@ class Visualisation:
 
     @property
     def name(self):
-        pass
+        return 'visualisation'
 
     def init_params(self):
         return {}

@@ -20,7 +20,7 @@ class DeepDream(Base):
                 self.layer_output = output
 
                 self.optimizer.zero_grad()
-                loss = -torch.norm(self.layer_output)
+                loss = - torch.norm(self.layer_output)
                 loss.backward()
                 self.optimizer.step()
 
@@ -31,7 +31,7 @@ class DeepDream(Base):
     def step(self, image, steps=5, save=False):
 
         self.module.zero_grad()
-        image_pre = image_net_preprocessing(image.squeeze().cpu()).to(self.device).unsqueeze(0)
+        image_pre = image_net_preprocessing(image.squeeze(0).cpu()).to(self.device).unsqueeze(0)
         self.image_var = Variable(image_pre, requires_grad=True).to(self.device)
 
         self.optimizer = torch.optim.Adam([self.image_var], lr=self.lr)
@@ -42,7 +42,7 @@ class DeepDream(Base):
             except:
                 pass
 
-        dreamed = self.image_var.data.squeeze()
+        dreamed = self.image_var.data.squeeze(0)
         c, w, h = dreamed.shape
 
         # dreamed = dreamed.view((w, h, c))
@@ -58,15 +58,15 @@ class DeepDream(Base):
     def deep_dream(self, image, n, top, scale_factor):
         if n > 0:
             b, c, w, h = image.shape
-            # print(w,h)
-            image = TF.to_pil_image(image.squeeze().cpu())
+
+            image = TF.to_pil_image(image.squeeze(0).cpu())
             image_down = TF.resize(image, (int(w * scale_factor), int(h * scale_factor)), Image.ANTIALIAS)
             image_down = image_down.filter(ImageFilter.GaussianBlur(0.5))
 
             image_down = TF.to_tensor(image_down).unsqueeze(0)
             from_down = self.deep_dream(image_down, n - 1, top, scale_factor)
 
-            from_down = TF.to_pil_image(from_down.squeeze().cpu())
+            from_down = TF.to_pil_image(from_down.squeeze(0).cpu())
             from_down = TF.resize(from_down, (w, h), Image.ANTIALIAS)
 
             image = ImageChops.blend(from_down, image, 0.6)
