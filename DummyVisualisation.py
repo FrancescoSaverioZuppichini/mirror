@@ -1,26 +1,44 @@
-from mirror.visualisations.WebVisualisation import WebVisualisation
+from mirror.visualisations.WebVisualisation import WebInterface
 from mirror.visualisations.core import Base
 
-class DummyVisualisation(WebVisualisation):
+
+def dummy(inputs, layer, repeat=1):
+    return inputs.repeat(repeat, 1, 1, 1), None
+
+class DummyVisualisation(WebInterface):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.n_repeat = 1
-
-    def __call__(self, inputs, layer):
-        return inputs.repeat(self.n_repeat,1, 1, 1), None
-
+        self.visualisation = dummy
+        self.repeat = 1
     @property
     def name(self):
         return 'dummy'
 
     @property
     def params(self):
-        return {'n_repeat' : {
+        return {'repeat' : {
                      'type' : 'slider',
                      'min' : 1,
                      'max' : 100,
-                     'value' : self.n_repeat,
+                     'value' : self.repeat,
                      'step': 1,
                      'params': {}
                  }
         }
+
+
+
+
+vis = DummyVisualisation(None, None)
+
+print(vis.params)
+
+print(vis.update_params( {'repeat' : {
+                     'type' : 'slider',
+                     'min' : 1,
+                     'max' : 100,
+                     'value' : 2,
+                     'step': 1,
+                     'params': {}
+                 }}))
+print(vis.params)

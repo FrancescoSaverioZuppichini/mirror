@@ -29,7 +29,7 @@ class WebClassInterface(WebInterface):
                 }
             }
 
-class WebBackProp(WebInterface):
+class WebBackProp(WebClassInterface):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.visualisation = SaliencyMap(self.module, self.device)
@@ -39,7 +39,7 @@ class WebBackProp(WebInterface):
         return 'Back Prop'
 
 
-class WebGradCam(WebInterface):
+class WebGradCam(WebClassInterface):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.visualisation = GradCam(self.module, self.device)
@@ -60,14 +60,16 @@ class WebDeepDream(WebInterface):
     def name(self):
         return 'Deep dream'
 
-    def __call__(self, input_image, layer):
-        return self.vis(input_image, layer,
-                        self.octaves,
-                        self.scale,
-                        self.lr)
     @property
     def params(self):
-        return {
+        return {'lr': {
+            'type': 'slider',
+            'min': 0.001,
+            'max': 1,
+            'value': self.lr,
+            'step': 0.001,
+            'params': {}
+        },
             'octaves': {
                 'type': 'slider',
                 'min': 1,
@@ -82,14 +84,6 @@ class WebDeepDream(WebInterface):
                 'max': 1,
                 'value': self.scale,
                 'step': 0.1,
-                'params': {}
-            },
-            'lr': {
-                'type': 'slider',
-                'min': 0.001,
-                'max': 1,
-                'value': self.lr,
-                'step': 0.001,
                 'params': {}
             }
         }

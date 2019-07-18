@@ -5,13 +5,15 @@ class WebInterface():
         self.cache = {}
         self.visualisation = None
 
+
     @property
     def name(self):
         return 'visualisation'
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self, input_image, layer):
         if self.visualisation is None: raise ValueError('You need to override this class and provide a visualisation in the field .visualisation.')
-        self.visualisation(*args, **kwargs)
+        params = {k: v['value'] for k, v in self.params.items()}
+        return self.visualisation(input_image, layer, **params)
 
     def clean_cache(self):
         self.cache = {}
