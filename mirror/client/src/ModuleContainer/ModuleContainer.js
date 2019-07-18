@@ -73,6 +73,7 @@ class ModuleContainer extends Container {
     }
 
     async setVisualisationsSettings(data){
+        console.log('****************', data)
         if(this.state.isLoading){
             console.log('Loading')
             return

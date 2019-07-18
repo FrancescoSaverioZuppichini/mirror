@@ -3,11 +3,11 @@ import torchvision.transforms.functional as TF
 
 from torch.autograd import Variable
 from PIL import Image, ImageFilter, ImageChops
-from .Base import Base
+from .Visualisation import Visualisation
 from .utils import image_net_postprocessing, \
     image_net_preprocessing
 
-class DeepDream(Base):
+class DeepDream(Visualisation):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.handle = None
@@ -55,16 +55,16 @@ class DeepDream(Base):
 
         return dreamed
 
-    def deep_dream(self, image, n, top, scale_factor):
+    def deep_dream(self, image, n, top, scale):
         if n > 0:
             b, c, w, h = image.shape
 
             image = TF.to_pil_image(image.squeeze(0).cpu())
-            image_down = TF.resize(image, (int(w * scale_factor), int(h * scale_factor)), Image.ANTIALIAS)
+            image_down = TF.resize(image, (int(w * scale), int(h * scale)), Image.ANTIALIAS)
             image_down = image_down.filter(ImageFilter.GaussianBlur(0.5))
 
             image_down = TF.to_tensor(image_down).unsqueeze(0)
-            from_down = self.deep_dream(image_down, n - 1, top, scale_factor)
+            from_down = self.deep_dream(image_down, n - 1, top, scale)
 
             from_down = TF.to_pil_image(from_down.squeeze(0).cpu())
             from_down = TF.resize(from_down, (w, h), Image.ANTIALIAS)
@@ -76,14 +76,14 @@ class DeepDream(Base):
 
         return self.step(image, steps=8, save=top == n + 1)
 
-    def __call__(self, inputs, layer, octaves=6, scale_factor=0.7, lr=0.1):
+    def __call__(self, inputs, layer, octaves=6, scale=0.7, lr=0.1):
         self.layer, self.lr = layer, lr
         self.handle = self.register_hooks()
         self.module.zero_grad()
 
         dd = self.deep_dream(inputs, octaves,
                              top=octaves,
-                             scale_factor=scale_factor)
+                             scale=scale)
         self.handle.remove()
 
         return dd.unsqueeze(0), {}

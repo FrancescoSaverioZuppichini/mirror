@@ -39,9 +39,6 @@ class VisualisationSettings extends Component{
 
     update = (value) => {
         var param = {...this.props.param, ...value}
-        // console.log('value', value)
-        // console.log('this.props.visualisation,', this.props.param)
-        // console.log('visualisation,', param)
         const key = this.props.name
         var fromDown =  {}
         fromDown[key] = param

@@ -4,13 +4,13 @@ import torch
 
 from torch.nn import ReLU
 from torch.autograd import Variable
-from .Base import Base
+from .Visualisation import Visualisation
 from torch.nn import AvgPool2d, Conv2d, Linear, ReLU, MaxPool2d, BatchNorm2d
 import torch.nn.functional as F
 
 from .utils import tensor2cam, module2traced, imshow
 
-class GradCam(Base):
+class GradCam(Visualisation):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.handles = []

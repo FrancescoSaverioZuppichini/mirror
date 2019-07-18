@@ -1,12 +1,12 @@
 import torch
 
-from .Base import Base
+from .Visualisation import Visualisation
 from torch.nn import ReLU
 from torch.autograd import Variable
 from torchvision.transforms import *
 from .utils import convert_to_grayscale
 
-class SaliencyMap(Base):
+class SaliencyMap(Visualisation):
     """
     Simonyan, Vedaldi, and Zisserman, “Deep Inside Convolutional Networks: Visualising Image Classification Models
     and Saliency Maps”, ICLR Workshop 2014

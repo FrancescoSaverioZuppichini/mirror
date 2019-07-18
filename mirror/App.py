@@ -5,12 +5,12 @@ import time
 
 from flask import Flask, request, Response, send_file, jsonify
 from torchvision.transforms import ToPILImage
-from .visualisations import WeightsVis
+from .visualisations import WebWeights
 from .ModuleTracer import ModuleTracer
 
 
 class App(Flask):
-    default_visualisations = [WeightsVis]
+    default_visualisations = [WebWeights]
     MAX_LINKS_EVERY_REQUEST = 64
 
     def __init__(self, inputs, model, visualisations=[]):
@@ -71,10 +71,10 @@ class App(Flask):
 
         @self.route('/api/visualisation', methods=['GET'])
         def api_visualisations():
-            serialised = [v.properties for v in self.visualisations]
+            serialised = [v.to_JSON() for v in self.visualisations]
 
             response = jsonify({'visualisations': serialised,
-                                'current': self.current_vis.properties})
+                                'current': self.current_vis.to_JSON()})
 
             return response
 
@@ -83,18 +83,16 @@ class App(Flask):
             data = json.loads(request.data.decode())
 
             vis_key = data['name']
+            visualisations_not_exist = vis_key not in self.name2visualisations
 
-            if vis_key not in self.name2visualisations:
+            if visualisations_not_exist:
                 response = Response(status=500,
                                     response='Visualisation {} not supported or does not exist'.format(vis_key))
             else:
                 self.current_vis = self.name2visualisations[vis_key]
-                # TODO I should think on a cleaver way to update properties and params
-                self.current_vis.properties = data
-                self.current_vis.params = self.current_vis.properties['params']
-                self.current_vis.cache = {}
-
-                response = jsonify(self.current_vis.properties)
+                self.current_vis.update_params(data['params'])
+                self.current_vis.clean_cache()
+                response = jsonify(self.current_vis.to_JSON())
 
             return response
 

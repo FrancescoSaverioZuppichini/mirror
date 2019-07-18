@@ -1,17 +1,17 @@
-from .Base import Base
+from .Visualisation import Visualisation
 
-class Weights(Base):
+class Weights(Visualisation):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.outputs = None
 
     def hook(self, module, input, output):
-        self.clean()
         self.outputs = output
 
     def __call__(self, inputs, layer, *args, **kwargs):
         self.handles.append(layer.register_forward_hook(self.hook))
         self.module(inputs)
+        self.clean()
         b, c, h, w = self.outputs.shape
         # reshape to make an array of images 1-Channel
         outputs = self.outputs.view(c, b, h, w)
