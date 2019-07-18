@@ -1,9 +1,13 @@
-from mirror.visualisations.WebVisualisation import WebInterface
+from mirror.visualisations.WebInterface import WebInterface
 from functools import partial
 from .core import *
 
+
 class WebClassInterface(WebInterface):
-    def __init__(self,  *args, **kwargs):
+    """
+    Helper class that already defines a textfield to select the class and a radio button to clip the gradient if needed.
+    """
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.target_class = None
         self.guide = False
@@ -15,8 +19,9 @@ class WebClassInterface(WebInterface):
             self.target_class = None
 
         return self.visualisation(input_image, None,
-                        self.guide,
-                        target_class=self.target_class)
+                                  self.guide,
+                                  target_class=self.target_class)
+
     @property
     def params(self):
         return {'guide': {'type': 'radio',
@@ -25,9 +30,9 @@ class WebClassInterface(WebInterface):
                 'target_class': {
                     'type': 'textfield',
                     'label': 'id',
-                    'value': self.target_class
+                    'value': self.target_class}
                 }
-            }
+
 
 class WebBackProp(WebClassInterface):
     def __init__(self, *args, **kwargs):
@@ -47,6 +52,7 @@ class WebGradCam(WebClassInterface):
     @property
     def name(self):
         return 'Grad Cam'
+
 
 class WebDeepDream(WebInterface):
     def __init__(self, *args, **kwargs):

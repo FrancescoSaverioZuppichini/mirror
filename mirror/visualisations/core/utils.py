@@ -11,10 +11,12 @@ image_net_std = torch.Tensor([0.229, 0.224, 0.225])
 
 import matplotlib.pyplot as plt
 
+
 class NormalizeInverse(Normalize):
     """
     Undoes the normalization and returns the reconstructed images in the input domain.
     """
+
     def __init__(self, mean, std):
         mean = torch.Tensor(mean)
         std = torch.Tensor(std)
@@ -24,6 +26,7 @@ class NormalizeInverse(Normalize):
 
     def __call__(self, tensor):
         return super().__call__(tensor.clone())
+
 
 image_net_preprocessing = Compose([
     Normalize(
@@ -38,18 +41,20 @@ image_net_postprocessing = Compose([
         std=image_net_std)
 ])
 
-def tensor2cam(image, cam):
-    image_with_heatmap = image2cam(image.permute(1,2,0).cpu().numpy(),
-              cam.detach().cpu().numpy())
 
-    return torch.from_numpy(image_with_heatmap).permute(2,0,1)
+def tensor2cam(image, cam):
+    image_with_heatmap = image2cam(image.permute(1, 2, 0).cpu().numpy(),
+                                   cam.detach().cpu().numpy())
+
+    return torch.from_numpy(image_with_heatmap).permute(2, 0, 1)
+
 
 def image2cam(image, cam):
     h, w, c = image.shape
 
     cam -= np.min(cam)
     cam /= np.max(cam)  # Normalize between 0-1
-    cam = cv2.resize(cam, (h,w))
+    cam = cv2.resize(cam, (h, w))
     cam = np.uint8(cam * 255.0)
 
     img_with_cam = cv2.applyColorMap(cam, cv2.COLORMAP_JET)
@@ -79,12 +84,14 @@ def convert_to_grayscale(cv2im):
     grayscale_im = np.expand_dims(grayscale_im, axis=0)
     return grayscale_im
 
+
 def imshow(tensor):
     tensor = tensor.squeeze()
     if len(tensor.shape) > 2: tensor = tensor.permute(1, 2, 0)
     img = tensor.cpu().numpy()
     plt.imshow(img, cmap='gray')
     plt.show()
+
 
 def module2traced(module, inputs):
     handles, modules = [], []
@@ -105,3 +112,25 @@ def module2traced(module, inputs):
     [h.remove() for h in handles]
 
     return modules
+
+
+class Hook():
+    def __init__(self):
+        self.handler = None
+        self.module, self.inputs, self.outputs = None, None, None
+
+    def clean(self):
+        if self.handler is not None: self.handler.remove()
+
+    def register_forward_hook(self, module):
+        self.clean()
+        self.handler = module.register_forward_hook(self)
+
+    def register_backward_hook(self, module):
+        self.clean()
+        self.handler = module.register_forward_hook(self)
+
+    def __call__(self, module, inputs, outputs):
+        self.module = module
+        self.inputs = inputs
+        self.outputs = outputs

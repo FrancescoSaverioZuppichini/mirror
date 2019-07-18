@@ -1,1 +1,2 @@
-from .wrappers import WebWeights, WebBackProp, WebGradCam, WebDeepDream
+from .interfaces import WebWeights, WebBackProp, WebGradCam, WebDeepDream, WebInterface
+from .core import Visualisation

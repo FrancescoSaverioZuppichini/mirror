@@ -3,11 +3,11 @@ import torchvision.transforms.functional as TF
 
 from torch.autograd import Variable
 from PIL import Image, ImageFilter, ImageChops
-from .Base import Base
+from .Visualisation import Visualisation
 from .utils import image_net_postprocessing, \
     image_net_preprocessing
 
-class DeepDream(Base):
+class DeepDream(Visualisation):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.handle = None
