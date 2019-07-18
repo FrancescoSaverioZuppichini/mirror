@@ -1,11 +1,3 @@
-
-
-```python
-%load_ext autoreload
-%autoreload 2
-
-```
-
 # Mirror
 ## Pytorch CNN Visualisation Tool
 
@@ -43,23 +35,6 @@ to_input = Compose([Resize((224, 224)), ToTensor()])
 # call mirror with the inputs and the model
 mirror([to_input(cat), to_input(dog_and_cat)], model, visualisations=[WebBackProp, WebGradCam, WebDeepDream])
 ```
-
-     * Serving Flask app "mirror.App" (lazy loading)
-     * Environment: production
-       WARNING: This is a development server. Do not use it in a production deployment.
-       Use a production WSGI server instead.
-     * Debug mode: off
-
-
-     * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
-    127.0.0.1 - - [18/Jul/2019 15:48:10] "GET /static/css/main.fd8c6979.chunk.css HTTP/1.1" 200 -
-    127.0.0.1 - - [18/Jul/2019 15:48:10] "GET /api/inputs HTTP/1.1" 200 -
-    127.0.0.1 - - [18/Jul/2019 15:48:10] "GET /api/model HTTP/1.1" 200 -
-    127.0.0.1 - - [18/Jul/2019 15:48:10] "GET /api/visualisation HTTP/1.1" 200 -
-    127.0.0.1 - - [18/Jul/2019 15:48:10] "GET /api/model/image/5875341241359/5875341241359/1647183868692822170/%3Cbuilt-in%20function%20id%3E/0 HTTP/1.1" 200 -
-    127.0.0.1 - - [18/Jul/2019 15:48:10] "GET /api/model/image/5875341241359/5875341241359/1647205858925377690/%3Cbuilt-in%20function%20id%3E/1 HTTP/1.1" 200 -
-
-
 It will automatic open a new tab in your browser
 
 ![alt](https://github.com/FrancescoSaverioZuppichini/mirror/blob/master/resources/mirror.png?raw=true)
@@ -134,9 +109,6 @@ The final result is
 ![alt](https://github.com/FrancescoSaverioZuppichini/mirror/blob/master/resources/repeat_example.jpg?raw=true)
 
 
-![alt](https://github.com/FrancescoSaverioZuppichini/mirror/blob/master/resources/dummy.jpg?raw=true)
-
-
 ## Change the front-end
 All the front-end is developed usin [React](https://reactjs.org/) and [Material-UI](https://material-ui.com/), two very known frameworks, making easier for anybody to contribuite.
 
@@ -171,8 +143,3 @@ mv ./build/static ../ && cp ./build/* ../static/
 
 - [ ] Add a `output_transformation` params for each visualisation to allow better customisation 
 - [ ] Add a `input_transformation` params for each visualisation to allow better customisation 
-
-
-```python
-
-```
