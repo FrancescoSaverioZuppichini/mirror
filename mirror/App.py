@@ -10,7 +10,7 @@ from .ModuleTracer import ModuleTracer
 
 
 class App(Flask):
-    default_visualisations = [WeightsVis]
+    default_visualisations = []
     MAX_LINKS_EVERY_REQUEST = 64
 
     def __init__(self, inputs, model, visualisations=[]):
@@ -71,10 +71,10 @@ class App(Flask):
 
         @self.route('/api/visualisation', methods=['GET'])
         def api_visualisations():
-            serialised = [v.properties for v in self.visualisations]
+            serialised = [v.to_JSON() for v in self.visualisations]
 
             response = jsonify({'visualisations': serialised,
-                                'current': self.current_vis.properties})
+                                'current': self.current_vis.to_JSON()})
 
             return response
 
@@ -90,11 +90,9 @@ class App(Flask):
             else:
                 self.current_vis = self.name2visualisations[vis_key]
                 # TODO I should think on a cleaver way to update properties and params
-                self.current_vis.properties = data
-                self.current_vis.params = self.current_vis.properties['params']
-                self.current_vis.cache = {}
-
-                response = jsonify(self.current_vis.properties)
+                self.current_vis.update_params(data['params'])
+                self.current_vis.clean_cache()
+                response = jsonify(self.current_vis.to_JSON())
 
             return response
 
