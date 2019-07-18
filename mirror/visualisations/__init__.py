@@ -1,1 +1,1 @@
-from .wrappers import DeepDreamVis, WeightsVis, GradCamVis, BackPropVis
+from .wrappers import WebWeights, WebBackProp, WebGradCam, WebDeepDream

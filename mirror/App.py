@@ -5,7 +5,7 @@ import time
 
 from flask import Flask, request, Response, send_file, jsonify
 from torchvision.transforms import ToPILImage
-from .visualisations import WeightsVis
+from .visualisations import WebWeights
 from .ModuleTracer import ModuleTracer
 
 

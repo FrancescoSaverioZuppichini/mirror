@@ -1,8 +1,8 @@
-from mirror.visualisations.WebVisualisation import WebVisualisation
+from mirror.visualisations.WebVisualisation import WebInterface
 from functools import partial
 from .core import *
 
-class WebClassVisualisation(WebVisualisation):
+class WebClassInterface(WebInterface):
     def __init__(self,  *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.target_class = None
@@ -14,7 +14,7 @@ class WebClassVisualisation(WebVisualisation):
         except:
             self.target_class = None
 
-        return self.vis(input_image, None,
+        return self.visualisation(input_image, None,
                         self.guide,
                         target_class=self.target_class)
     @property
@@ -29,29 +29,29 @@ class WebClassVisualisation(WebVisualisation):
                 }
             }
 
-class BackPropVis(WebClassVisualisation):
+class WebBackProp(WebInterface):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.vis = SaliencyMap(self.module, self.device)
+        self.visualisation = SaliencyMap(self.module, self.device)
 
     @property
     def name(self):
         return 'Back Prop'
 
 
-class GradCamVis(WebClassVisualisation):
+class WebGradCam(WebInterface):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.vis = GradCam(self.module, self.device)
+        self.visualisation = GradCam(self.module, self.device)
 
     @property
     def name(self):
         return 'Grad Cam'
 
-class DeepDreamVis(WebVisualisation):
+class WebDeepDream(WebInterface):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.vis = DeepDream(self.module, self.device)
+        self.visualisation = DeepDream(self.module, self.device)
         self.octaves = 4
         self.lr = 0.1
         self.scale = 0.7
@@ -95,7 +95,7 @@ class DeepDreamVis(WebVisualisation):
         }
 
 
-class WeightsVis(WebVisualisation):
+class WebWeights(WebInterface):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.vis = Weights(self.module, self.device)

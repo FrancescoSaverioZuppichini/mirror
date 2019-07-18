@@ -13,4 +13,4 @@ dog_and_cat = Image.open("./dog_and_cat.jpg")
 to_input = Compose([Resize((224, 224)), ToTensor()])
 
 # call mirror with the inputs and the model
-mirror([to_input(cat), to_input(dog_and_cat)], model, visualisations=[WeightsVis, DeepDreamVis, BackPropVis, GradCamVis])
+mirror([to_input(cat), to_input(dog_and_cat)], model, visualisations=[WebWeights, WebBackProp, WebGradCam, WebDeepDream])

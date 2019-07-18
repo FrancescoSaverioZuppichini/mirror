@@ -1,20 +1,17 @@
-class WebVisualisation:
+class WebInterface():
     def __init__(self, module, device):
         self.module, self.device = module, device
         self.outputs = []
         self.cache = {}
+        self.visualisation = None
 
     @property
     def name(self):
         return 'visualisation'
 
-    def __call__(self, inputs, layer):
-        """
-        Do something with the inputs
-        :param inputs:
-        :return:
-        """
-        pass
+    def __call__(self, *args, **kwargs):
+        if self.visualisation is None: raise ValueError('You need to override this class and provide a visualisation in the field .visualisation.')
+        self.visualisation(*args, **kwargs)
 
     def clean_cache(self):
         self.cache = {}
