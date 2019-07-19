@@ -1,12 +1,12 @@
-from mirror.visualisations.WebInterface import WebInterface
-from functools import partial
-from .core import *
+from mirror.visualisations.web.WebInterface import WebInterface
+from mirror.visualisations.core import *
 
 
 class WebClassInterface(WebInterface):
     """
     Helper class that already defines a textfield to select the class and a radio button to clip the gradient if needed.
     """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.target_class = None
