@@ -1,4 +1,4 @@
-from mirror.visualisations.WebInterface import WebInterface
+from mirror.visualisations.web.WebInterface import WebInterface
 from mirror.visualisations import Visualisation
 
 class RepeatInput(Visualisation):
@@ -32,9 +32,8 @@ class WebRepeatInput(WebInterface):
 
 
 from mirror import mirror
-from mirror.visualisations import *
 from PIL import Image
-from torchvision.models import resnet101, resnet18, vgg16, alexnet
+from torchvision.models import vgg16
 from torchvision.transforms import ToTensor, Resize, Compose
 
 # create a model

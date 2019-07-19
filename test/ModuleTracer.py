@@ -1,11 +1,6 @@
 import unittest
-import torch
 import torch.nn as nn
-from mirror.ModuleTracer import *
-import pprint
-from dataclasses import dataclass
-from mirror.visualisations.interfaces import *
-from mirror.visualisations.buttons import *
+
 
 class MyModule(nn.Module):
     def __init__(self):
@@ -24,7 +19,7 @@ class MyModule(nn.Module):
         x = self.linear(x)
         return x
 #
-from mirror.visualisations.WebInterface import Visualisation
+from mirror.visualisations.web.WebInterface import Visualisation
 
 
 class TestVisualisation(Visualisation):

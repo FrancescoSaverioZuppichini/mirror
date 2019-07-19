@@ -9,3 +9,5 @@ def mirror(input, model, visualisations=[], port=5000):
     webbrowser.open_new(f'http://localhost:{port}')  # opens in default browser
 
     app.run(host="0.0.0.0", port=5000)
+    # app.run(host="0.0.0.0", port=5000,  use_reloader=True) # DEBUG
+
