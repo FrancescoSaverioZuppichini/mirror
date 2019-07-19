@@ -22,14 +22,15 @@ class WebInterface():
     def clean_cache(self):
         self.cache = {}
 
-    @property
-    def params(self):
-        return {}
+    # @property
+    # def params(self):
+    #     return {}
 
     def update_params(self, params: dict):
-        for k, v in params.items():
-            if 'value' not in v: raise ValueError('params should contains a value.')
-            setattr(self, k, v['value'])
+        self.params = params
+        # for k, v in params.items():
+        #     if 'value' not in v: raise ValueError('params should contains a value.')
+        #     setattr(self, k, v['value'])
 
     def to_JSON(self):
         return {'name': self.name,
