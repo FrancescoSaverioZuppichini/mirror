@@ -1,5 +1,5 @@
 from mirror.visualisations.web.WebInterface import WebInterface
-from mirror.visualisations import Visualisation
+from mirror.visualisations.core import Visualisation
 
 class RepeatInput(Visualisation):
 

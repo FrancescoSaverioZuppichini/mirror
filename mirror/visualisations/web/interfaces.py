@@ -1,108 +1,45 @@
 from mirror.visualisations.web.WebInterface import WebInterface
 from mirror.visualisations.core import *
+from functools import partial
 
+class_parameters = lambda: {'guide': {'type': 'radio',
+                                      'value': False
+                                      },
+                            'target_class': {
+                                'type': 'textfield',
+                                'label': 'id',
+                                'value': None}
+                            }
 
-class WebClassInterface(WebInterface):
-    """
-    Helper class that already defines a textfield to select the class and a radio button to clip the gradient if needed.
-    """
+Weights = partial(WebInterface.from_visualisation, Weights, params={}, name='Weights')
+BackProp = partial(WebInterface.from_visualisation, SaliencyMap, params=class_parameters(), name='Back Prop')
+GradCam = partial(WebInterface.from_visualisation, GradCam, params=class_parameters(), name='Grad CAM')
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.target_class = None
-        self.guide = False
+deep_dream_params = {'lr':
+    {
+        'type': 'slider',
+        'min': 0.001,
+        'max': 1,
+        'value': 0.1,
+        'step': 0.001,
+        'params': {}
+    },
+    'octaves': {
+        'type': 'slider',
+        'min': 1,
+        'max': 10,
+        'value': 4,
+        'step': 1,
+        'params': {}
+    },
+    'scale': {
+        'type': 'slider',
+        'min': 0.1,
+        'max': 1,
+        'value': 0.7,
+        'step': 0.1,
+        'params': {}
+    }
+}
 
-    def __call__(self, input_image, layer):
-        try:
-            self.target_class = int(self.target_class)
-        except:
-            self.target_class = None
-
-        return self.visualisation(input_image, None,
-                                  self.guide,
-                                  target_class=self.target_class)
-
-    @property
-    def params(self):
-        return {'guide': {'type': 'radio',
-                          'value': self.guide
-                          },
-                'target_class': {
-                    'type': 'textfield',
-                    'label': 'id',
-                    'value': self.target_class}
-                }
-
-
-class WebBackProp(WebClassInterface):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.visualisation = SaliencyMap(self.module, self.device)
-
-    @property
-    def name(self):
-        return 'Back Prop'
-
-
-class WebGradCam(WebClassInterface):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.visualisation = GradCam(self.module, self.device)
-
-    @property
-    def name(self):
-        return 'Grad Cam'
-
-
-class WebDeepDream(WebInterface):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.visualisation = DeepDream(self.module, self.device)
-        self.octaves = 4
-        self.lr = 0.1
-        self.scale = 0.7
-
-    @property
-    def name(self):
-        return 'Deep dream'
-
-    @property
-    def params(self):
-        return {'lr': {
-            'type': 'slider',
-            'min': 0.001,
-            'max': 1,
-            'value': self.lr,
-            'step': 0.001,
-            'params': {}
-        },
-            'octaves': {
-                'type': 'slider',
-                'min': 1,
-                'max': 10,
-                'value': self.octaves,
-                'step': 1,
-                'params': {}
-            },
-            'scale': {
-                'type': 'slider',
-                'min': 0.1,
-                'max': 1,
-                'value': self.scale,
-                'step': 0.1,
-                'params': {}
-            }
-        }
-
-
-class WebWeights(WebInterface):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.vis = Weights(self.module, self.device)
-
-    def __call__(self, inputs, layer):
-        return self.vis(inputs, layer)
-
-    @property
-    def name(self):
-        return 'Weights'
+DeepDream = partial(WebInterface.from_visualisation, DeepDream, params=deep_dream_params, name='Deep Dream')

@@ -1,2 +1,2 @@
-from .interfaces import WebWeights, WebBackProp, WebGradCam, WebDeepDream
+from .interfaces import *
 from .WebInterface import WebInterface
