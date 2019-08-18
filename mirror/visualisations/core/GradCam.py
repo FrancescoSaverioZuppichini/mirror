@@ -56,7 +56,7 @@ class GradCam(Visualisation):
         if target_class is None: values, target_class = torch.max(predictions, dim=1)
 
         target = torch.zeros(predictions.size()).to(self.device)
-        target[0][target_class] = 1
+        target[0][int(target_class)] = 1
 
         predictions.backward(gradient=target, retain_graph=True)
 

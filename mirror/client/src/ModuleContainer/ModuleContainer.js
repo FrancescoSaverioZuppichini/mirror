@@ -35,23 +35,21 @@ class ModuleContainer extends Container {
     }
 
     getLayerOutputs = async (layer=this.state.layer, start=false) => {
-        if(this.state.isLoading){
-            console.log('Loading')
-            return
-        } 
-        var isSameLayer = layer.id == this.state.layer.id
-        if(start) isSameLayer = false
-        var last = isSameLayer ? this.state.last + 64 : 0
-        try {
-            await this.setState({ isLoading: true })
+        if(!this.state.isLoading){
+            var isSameLayer = layer.id == this.state.layer.id
+            if(start) isSameLayer = false
+            var last = isSameLayer ? this.state.last + 64 : 0
+            try {
+                await this.setState({ isLoading: true })
 
-            const res = await axios.get(api.getModuleLayerOutput(layer.id, last), { params: { last } })
-    
-            var outputs = isSameLayer ? this.state.outputs.concat(res.data.links) : res.data.links
-            
-            await this.setState({ outputs, layer, last, isLoading: false, next: res.data.next })
-        } catch {
-            await this.setState({ isLoading: false })
+                const res = await axios.get(api.getModuleLayerOutput(layer.id, last), { params: { last } })
+        
+                var outputs = isSameLayer ? this.state.outputs.concat(res.data.links) : res.data.links
+                
+                await this.setState({ outputs, layer, last, isLoading: false, next: res.data.next })
+            } catch {
+                await this.setState({ isLoading: false })
+            }
         }
     }
 
@@ -60,37 +58,35 @@ class ModuleContainer extends Container {
     }
 
     async getVisualisations() {
-        if(this.state.isLoading){
-            console.log('Loading')
-            return
-        } 
-        await this.setState({ isLoading: true })
+        if(!this.state.isLoading){
+         
+            await this.setState({ isLoading: true })
 
-        const res = await axios.get(api.GET_VISUALISATIONS)
-        const visualisations = res.data.visualisations
-        const currentVisualisation = res.data.current
-        await this.setState({ visualisations, isLoading: false, currentVisualisation })
+            const res = await axios.get(api.GET_VISUALISATIONS)
+            const visualisations = res.data.visualisations
+            const currentVisualisation = res.data.current
+            await this.setState({ visualisations, isLoading: false, currentVisualisation })
+        }
     }
 
     async setVisualisationsSettings(data){
         console.log('****************', data)
-        if(this.state.isLoading){
-            console.log('Loading')
-            return
-        } 
-        await this.setState({ isLoading: true })
+        if(!this.state.isLoading){
+    
+            await this.setState({ isLoading: true })
 
-        const res = await axios.put(api.PUT_VISUALISATIONS, data)
+            const res = await axios.put(api.PUT_VISUALISATIONS, data)
 
-        const currentVisualisation = res.data
-        var visualisations = [...this.state.visualisations]
-        // TODO could be smarter!
-        for(let key in visualisations){
-            if(visualisations[key].name == currentVisualisation.name){
-                visualisations[key] = currentVisualisation
+            const currentVisualisation = res.data
+            var visualisations = [...this.state.visualisations]
+            // TODO could be smarter!
+            for(let key in visualisations){
+                if(visualisations[key].name == currentVisualisation.name){
+                    visualisations[key] = currentVisualisation
+                }
             }
+            await this.setState({isLoading: false, currentVisualisation, visualisations })
         }
-        await this.setState({isLoading: false, currentVisualisation, visualisations })
 
     }
 

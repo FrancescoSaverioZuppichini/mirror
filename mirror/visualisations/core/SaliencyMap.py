@@ -55,7 +55,7 @@ class SaliencyMap(Visualisation):
         if target_class == None: _, target_class = torch.max(predictions, dim=1)
 
         one_hot_output = torch.zeros(predictions.size()).to(self.device)
-        one_hot_output[0][target_class] = 1
+        one_hot_output[0][int(target_class)] = 1
 
         self.module.zero_grad()
 

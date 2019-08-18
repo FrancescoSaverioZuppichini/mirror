@@ -8,7 +8,7 @@ class_parameters = lambda: {'guide': {'type': 'radio',
                             'target_class': {
                                 'type': 'textfield',
                                 'label': 'id',
-                                'value': None}
+                                'value': None }
                             }
 
 Weights = partial(WebInterface.from_visualisation, Weights, params={}, name='Weights')

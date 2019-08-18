@@ -1,3 +1,5 @@
+import json
+
 class WebInterface():
     def __init__(self, callable, params, name):
         self.callable = callable
