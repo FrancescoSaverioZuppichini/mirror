@@ -1,10 +1,3 @@
-
-
-```python
-%load_ext autoreload
-%autoreload 2
-```
-
 # Mirror
 ## Pytorch CNN Visualisation Tool
 
@@ -107,7 +100,7 @@ cam(to_input(cat).unsqueeze(0), None) # will return the output image and some ad
 ```
 
 ## Create a Visualisation
-To create a visualisation you first have to subclass the `Visualisation` class by just define the `__call__` method to return an image and additional informations. The following example creates a custom visualisation that just repeat the input. We first define a custom Visualisation
+To create a visualisation you first have to subclass the `Visualisation` class and override the`__call__` method to return an image and, if needed, additional informations. The following example creates a custom visualisation that just repeat the input `repeat` times. So
 
 
 ```python
@@ -120,7 +113,11 @@ class RepeatInput(Visualisation):
 
 ```
 
-This class just repeat the input for `repeat` times. Now we have to create a `WebInterface` to make this class communicate with the application. Easily, we can use `WebInterface.from_visualisation` to create the communication chain between our visualisation and the web app
+This class repeats the input for `repeat` times.
+### Connect to the web interface
+To connect our fancy visualisation to the web interface, we have to create a `WebInterface`. Easily, we can use `WebInterface.from_visualisation` to generate the communication channel between our visualisation and the web app. 
+
+It follows and example
 
 
 ```python
@@ -138,13 +135,16 @@ params = {'repeat' : {
         }
 
 
-visualisation = partial(WebInterface.from_visualisation, RepeatInput, params=params, name='Visualisation')
-
+visualisation = partial(WebInterface.from_visualisation, RepeatInput, params=params, name='Repeat')
 ```
 
-First we import `WebInterface` and `partial`. Then, we create a dictionary where each **they key is the visualisation parameter name**. There are three basic UI blocks: *slider*, *textfield* and *radio*. The input is stored in the `value` slot.
+First we import `WebInterface` and `partial`. Then, we create a dictionary where each **they key is the visualisation parameter name**. In our example, `RepeatInput` takes a parameter called `repeat`, thus we have to define a dictionary `{ 'repeat' : { ... }' }`. 
 
-Then we call `WebInterface.from_visualisation` by passing the visualisation, the params and the name. We need to wrap this function using `partial` since `mirror` will need to dynamically pass some others parameters at run time.
+The value of that dictionary is the configuration for one of the basic UI elements: *slider*, *textfield* and *radio*. 
+
+The input is stored in the `value` slot.
+
+Then we call `WebInterface.from_visualisation` by passing the visualisation, the params and the name. We need to wrap this function using `partial` since `mirror` will need to dynamically pass some others parameters, the current layer and the input, at run time.
 
 ![alt](https://github.com/FrancescoSaverioZuppichini/mirror/blob/master/resources/repeat_slider.jpg?raw=true)
 The final result is 
