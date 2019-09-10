@@ -126,21 +126,6 @@ params = {'repeat' : {
 
 visualisation = partial(WebInterface.from_visualisation, RepeatInput, params=params, name='Repeat')
 ```
-
-
-    ---------------------------------------------------------------------------
-
-    NameError                                 Traceback (most recent call last)
-
-    <ipython-input-1-274e90ff3655> in <module>
-         13 
-         14 
-    ---> 15 visualisation = partial(WebInterface.from_visualisation, RepeatInput, params=params, name='Repeat')
-    
-
-    NameError: name 'RepeatInput' is not defined
-
-
 First we import `WebInterface` and `partial`. Then, we create a dictionary where each **they key is the visualisation parameter name**. In our example, `RepeatInput` takes a parameter called `repeat`, thus we have to define a dictionary `{ 'repeat' : { ... }' }`. 
 
 The value of that dictionary is the configuration for one of the basic UI elements: *slider*, *textfield* and *radio*. 
