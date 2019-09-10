@@ -119,8 +119,7 @@ class VisualisationSettings extends Component{
     }
 
     render(){
-        const { classes, module, param, name} = this.props
-        const {params} = param
+        const { param } = this.props
 
         return (
             <List>
@@ -136,16 +135,14 @@ class VisualisationSettings extends Component{
 }
 
 class VisualisationSettingsRoot extends Component {
-    update = (value, down=true) => {
-        console.log('from down', value)
-        
+    update = (value, down=true) => {        
         if(down) {
             var visualisation = {...this.props.visualisation.params, ...value}
             visualisation = {...this.props.visualisation, params: visualisation}
-        } else{
+        } else {
             visualisation = {...this.props.visualisation, ...value}
         }
-        console.log(visualisation)
+
         this.props.module.setVisualisationsSettings(visualisation)
         this.props.module.getLayerOutputs(this.props.module.state.layer, true)
 

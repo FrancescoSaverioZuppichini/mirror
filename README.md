@@ -1,10 +1,12 @@
-
 # Mirror
 ## Pytorch CNN Visualisation Tool
+*Francesco Saverio Zuppichini*
 
 This is a raw beta so expect lots of things to change and improve over time.
 
 ![alt](https://github.com/FrancescoSaverioZuppichini/mirror/blob/master/resources/mirror.gif?raw=true)
+
+An interactive version of this tutorial can be [found here](https://github.com/FrancescoSaverioZuppichini/mirror/blob/master/README.ipynb)
 
 ### Getting started
 
@@ -34,8 +36,205 @@ dog_and_cat = Image.open("./dog_and_cat.jpg")
 # resize the image and make it a tensor
 to_input = Compose([Resize((224, 224)), ToTensor()])
 # call mirror with the inputs and the model
-mirror([to_input(cat), to_input(dog_and_cat)], model, visualisations=[WebBackProp, WebGradCam, WebDeepDream])
+mirror([to_input(cat), to_input(dog_and_cat)], model, visualisations=[BackProp, GradCam, DeepDream])
 ```
+
+    Downloading: "https://download.pytorch.org/models/vgg16-397923af.pth" to /Users/vaevictis/.cache/torch/checkpoints/vgg16-397923af.pth
+    100%|██████████| 553433881/553433881 [00:39<00:00, 13900810.38it/s]
+
+
+     * Serving Flask app "mirror.App" (lazy loading)
+     * Environment: production
+       WARNING: Do not use the development server in a production environment.
+       Use a production WSGI server instead.
+     * Debug mode: off
+
+
+     * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
+    127.0.0.1 - - [10/Sep/2019 21:07:03] "GET / HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:03] "GET /static/css/main.fd8c6979.chunk.css HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:03] "GET /static/js/1.2f835df5.chunk.js HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:03] "GET /static/js/main.e85ab74f.chunk.js HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:04] "GET /api/inputs HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:04] "GET /api/model HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:04] "GET /api/visualisation HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:04] "GET /api/model/image/-9223372036580704890/-9223372036580704890/196455791416833112/%3Cbuilt-in%20function%20id%3E/1 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:04] "GET /api/model/image/-9223372036580704890/-9223372036580704890/196439298742416472/%3Cbuilt-in%20function%20id%3E/0 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:04] "GET /manifest.json HTTP/1.1" 404 -
+    127.0.0.1 - - [10/Sep/2019 21:07:04] "GET /favicon.ico HTTP/1.1" 404 -
+    127.0.0.1 - - [10/Sep/2019 21:07:06] "GET /api/model/layer/output/9223372037162847278?last=0 HTTP/1.1" 500 -
+    127.0.0.1 - - [10/Sep/2019 21:07:07] "GET /api/model/layer/output/308065256?last=0 HTTP/1.1" 500 -
+    127.0.0.1 - - [10/Sep/2019 21:07:07] "GET /api/model/layer/output/308065263?last=0 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221084957931467867/308065263/0 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221105298896581723/308065263/1 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221130587664020571/308065263/2 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221135535466345563/308065263/3 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221140483268670555/308065263/4 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221144881315181659/308065263/5 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221151478384948315/308065263/6 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221156426187273307/308065263/7 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221160824233784411/308065263/8 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221167971059364955/308065263/9 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221172369105876059/308065263/10 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221176767152387163/308065263/11 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221186113001223259/308065263/13 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221181714954712155/308065263/12 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221191060803548251/308065263/14 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221196008605873243/308065263/15 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221199856896570459/308065263/16 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221204804698895451/308065263/17 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221209202745406555/308065263/18 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221214150547731547/308065263/19 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221218548594242651/308065263/20 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221222946640753755/308065263/21 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221227894443078747/308065263/22 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221232292489589851/308065263/23 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221237240291914843/308065263/24 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221241638338425947/308065263/25 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221248235408192603/308065263/26 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221253183210517595/308065263/27 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221266927105864795/308065263/28 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221276272954700891/308065263/30 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221271325152375899/308065263/29 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221280671001211995/308065263/31 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221285618803536987/308065263/32 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221290016850048091/308065263/33 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221294964652373083/308065263/34 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221298812943070299/308065263/35 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221303760745395291/308065263/36 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221308708547720283/308065263/37 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221313106594231387/308065263/38 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221318054396556379/308065263/39 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221321902687253595/308065263/40 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221326850489578587/308065263/41 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221331798291903579/308065263/42 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221338395361670235/308065263/43 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221343343163995227/308065263/44 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221347741210506331/308065263/45 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221352139257017435/308065263/46 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221357087059342427/308065263/47 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221361485105853531/308065263/48 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221366432908178523/308065263/49 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221370281198875739/308065263/50 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221375229001200731/308065263/51 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221380176803525723/308065263/52 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221384574850036827/308065263/53 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221389522652361819/308065263/54 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221393920698872923/308065263/55 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221398318745384027/308065263/56 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221409863617475675/308065263/57 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221417010443056219/308065263/58 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221423607512822875/308065263/59 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221430754338403419/308065263/60 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221435702140728411/308065263/61 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221440100187239515/308065263/62 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:08] "GET /api/model/image/4425844920/-9223372036546774517/2221444498233750619/308065263/63 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:11] "PUT /api/visualisation HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:12] "GET /api/model/layer/output/308065263?last=0 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:12] "GET /api/model/image/4425844920/-9223372036578155653/1207946015831225440/308065263/0 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:16] "PUT /api/visualisation HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:17] "GET /api/model/layer/output/308065263?last=0 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:17] "GET /api/model/image/4425844920/-9223372036578155653/872664788347909221/308065263/0 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:18] "PUT /api/visualisation HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:19] "GET /api/model/layer/output/308065263?last=0 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:19] "GET /api/model/image/4425844920/-9223372036578155646/2196907796748301415/308065263/0 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:21] "GET /api/model/layer/output/308065256?last=0 HTTP/1.1" 500 -
+    127.0.0.1 - - [10/Sep/2019 21:07:22] "GET /api/model/layer/output/308065256?last=0 HTTP/1.1" 500 -
+    127.0.0.1 - - [10/Sep/2019 21:07:26] "GET /api/model/layer/output/308071460?last=0 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:26] "GET /api/model/image/4425844920/-9223372036578155646/396973726974342254/308071460/0 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:28] "GET /api/model/layer/output/9223372037162847271?last=0 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:28] "GET /api/model/image/4425844920/-9223372036578155646/2153226398800016496/9223372037162847271/0 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:29] "GET /api/model/layer/output/308071460?last=0 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:29] "GET /api/model/image/4425844920/-9223372036578155646/1375305979229893745/308071460/0 HTTP/1.1" 200 -
+
+
+    [INFO] cached
+
+
+    127.0.0.1 - - [10/Sep/2019 21:07:30] "PUT /api/visualisation HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:31] "GET /api/model/layer/output/308071460?last=0 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:31] "GET /api/model/image/4425844920/-9223372036578155646/2174509095623062643/308071460/0 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:32] "PUT /api/visualisation HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:33] "GET /api/model/layer/output/308071460?last=0 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:33] "GET /api/model/image/4425844920/-9223372036578155646/1482006435879974005/308071460/0 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:34] "PUT /api/visualisation HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:34] "PUT /api/visualisation HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:34] "PUT /api/visualisation HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:35] "GET /api/model/layer/output/308071460?last=0 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:35] "GET /api/model/image/4425844920/-9223372036578155653/801744089333101687/308071460/0 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:36] "PUT /api/visualisation HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:36] "GET /api/model/layer/output/308071460?last=0 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:36] "GET /api/model/image/4425844920/-9223372036578155653/651864161792816248/308071460/0 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:36] "PUT /api/visualisation HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:36] "PUT /api/visualisation HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:37] "GET /api/model/layer/output/308071460?last=0 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:37] "GET /api/model/image/4425844920/-9223372036578155653/588070497149252729/308071460/0 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:37] "GET /api/model/layer/output/308071460?last=0 HTTP/1.1" 404 -
+    127.0.0.1 - - [10/Sep/2019 21:07:37] "GET /api/model/layer/output/308071460?last=0 HTTP/1.1" 404 -
+    127.0.0.1 - - [10/Sep/2019 21:07:37] "PUT /api/visualisation HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:38] "GET /api/model/layer/output/308071460?last=0 HTTP/1.1" 404 -
+    127.0.0.1 - - [10/Sep/2019 21:07:38] "GET /api/model/layer/output/308071460?last=0 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:39] "GET /api/model/image/4425844920/-9223372036578155646/2285388246214505594/308071460/0 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:39] "PUT /api/visualisation HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:40] "PUT /api/visualisation HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:40] "GET /api/model/layer/output/308071460?last=0 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:40] "GET /api/model/image/4425844920/-9223372036578155653/1785614581657760892/308071460/0 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:41] "GET /api/model/layer/output/308071460?last=0 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:41] "GET /api/model/image/4425844920/-9223372036578155653/1659425281405351037/308071460/0 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:42] "PUT /api/visualisation HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:43] "GET /api/model/layer/output/308071460?last=0 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:43] "GET /api/model/image/4425844920/-9223372036578155646/964238713778861183/308071460/0 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:43] "PUT /api/visualisation HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:43] "PUT /api/visualisation HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:43] "PUT /api/visualisation HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:44] "GET /api/model/layer/output/308071460?last=0 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:44] "GET /api/model/image/4425844920/-9223372036578155646/1156294807849006208/308071460/0 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:45] "GET /api/model/layer/output/308071460?last=0 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:45] "GET /api/model/layer/output/308071460?last=0 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:45] "GET /api/model/image/4425844920/-9223372036578155646/981595054579119233/308071460/0 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:45] "GET /api/model/image/4425844920/-9223372036578155646/1003154828332364929/308071460/0 HTTP/1.1" 200 -
+
+
+    [INFO] cached
+
+
+    127.0.0.1 - - [10/Sep/2019 21:07:45] "PUT /api/visualisation HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:58] "GET /api/model/layer/output/308071460?last=0 HTTP/1.1" 200 -
+    127.0.0.1 - - [10/Sep/2019 21:07:58] "GET /api/model/image/4425844920/-9223372036578155639/1631058980920358030/308071460/0 HTTP/1.1" 200 -
+    [2019-09-10 21:07:59,017] ERROR in app: Exception on /api/model/layer/output/9223372037162847271 [GET]
+    Traceback (most recent call last):
+      File "/Users/vaevictis/anaconda3/lib/python3.7/site-packages/flask/app.py", line 2292, in wsgi_app
+        response = self.full_dispatch_request()
+      File "/Users/vaevictis/anaconda3/lib/python3.7/site-packages/flask/app.py", line 1815, in full_dispatch_request
+        rv = self.handle_user_exception(e)
+      File "/Users/vaevictis/anaconda3/lib/python3.7/site-packages/flask/app.py", line 1718, in handle_user_exception
+        reraise(exc_type, exc_value, tb)
+      File "/Users/vaevictis/anaconda3/lib/python3.7/site-packages/flask/_compat.py", line 35, in reraise
+        raise value
+      File "/Users/vaevictis/anaconda3/lib/python3.7/site-packages/flask/app.py", line 1813, in full_dispatch_request
+        rv = self.dispatch_request()
+      File "/Users/vaevictis/anaconda3/lib/python3.7/site-packages/flask/app.py", line 1799, in dispatch_request
+        return self.view_functions[rule.endpoint](**req.view_args)
+      File "/Users/vaevictis/Documents/mirror/mirror/App.py", line 112, in api_model_layer_output
+        layer_cache[layer] = self.current_vis(input_clone, layer)
+      File "/Users/vaevictis/Documents/mirror/mirror/visualisations/web/WebInterface.py", line 14, in __call__
+        return self.callable(input_image, layer, **self.call_params)
+      File "/Users/vaevictis/Documents/mirror/mirror/visualisations/core/DeepDream.py", line 86, in __call__
+        scale=scale)
+      File "/Users/vaevictis/Documents/mirror/mirror/visualisations/core/DeepDream.py", line 67, in deep_dream
+        from_down = self.deep_dream(image_down, n - 1, top, scale)
+      File "/Users/vaevictis/Documents/mirror/mirror/visualisations/core/DeepDream.py", line 67, in deep_dream
+        from_down = self.deep_dream(image_down, n - 1, top, scale)
+      File "/Users/vaevictis/Documents/mirror/mirror/visualisations/core/DeepDream.py", line 67, in deep_dream
+        from_down = self.deep_dream(image_down, n - 1, top, scale)
+      [Previous line repeated 1 more time]
+      File "/Users/vaevictis/Documents/mirror/mirror/visualisations/core/DeepDream.py", line 77, in deep_dream
+        return self.step(image, steps=8, save=top == n + 1)
+      File "/Users/vaevictis/Documents/mirror/mirror/visualisations/core/DeepDream.py", line 45, in step
+        dreamed = self.image_var.data.squeeze(0)
+    AttributeError: 'DeepDream' object has no attribute 'image_var'
+    127.0.0.1 - - [10/Sep/2019 21:07:59] "GET /api/model/layer/output/9223372037162847271?last=0 HTTP/1.1" 500 -
+
 
 It will automatic open a new tab in your browser
 
@@ -77,66 +276,8 @@ cam = GradCam(model, device='cpu')
 cam(to_input(cat).unsqueeze(0), None) # will return the output image and some additional information
 ```
 
-
-
-
-    (tensor([[[[0.4851, 0.4911, 0.4950,  ..., 0.4592, 0.4612, 0.4612],
-               [0.4831, 0.4911, 0.4970,  ..., 0.4632, 0.4652, 0.4652],
-               [0.4831, 0.4891, 0.4950,  ..., 0.4692, 0.4692, 0.4692],
-               ...,
-               [0.3738, 0.3797, 0.3718,  ..., 0.4791, 0.4791, 0.4771],
-               [0.3738, 0.3777, 0.3738,  ..., 0.4851, 0.4851, 0.4851],
-               [0.3718, 0.3718, 0.3718,  ..., 0.4871, 0.4891, 0.4911]],
-     
-              [[0.9225, 0.9284, 0.9344,  ..., 0.8907, 0.8887, 0.8867],
-               [0.9205, 0.9284, 0.9364,  ..., 0.8926, 0.8907, 0.8867],
-               [0.9245, 0.9284, 0.9384,  ..., 0.8887, 0.8847, 0.8787],
-               ...,
-               [0.3678, 0.3718, 0.3658,  ..., 0.9165, 0.9185, 0.9185],
-               [0.3698, 0.3738, 0.3698,  ..., 0.9245, 0.9245, 0.9225],
-               [0.3638, 0.3678, 0.3678,  ..., 0.9264, 0.9284, 0.9304]],
-     
-              [[0.8111, 0.8171, 0.8330,  ..., 0.9264, 0.9245, 0.9245],
-               [0.8052, 0.8171, 0.8330,  ..., 0.9284, 0.9264, 0.9245],
-               [0.8032, 0.8171, 0.8290,  ..., 0.9304, 0.9245, 0.9205],
-               ...,
-               [0.7455, 0.7515, 0.7455,  ..., 0.8449, 0.8449, 0.8429],
-               [0.7515, 0.7575, 0.7515,  ..., 0.8509, 0.8509, 0.8489],
-               [0.7475, 0.7515, 0.7515,  ..., 0.8529, 0.8549, 0.8569]]]]),
-     {'prediction': tensor([285]),
-      'cam': tensor([[0.4018, 0.2273, 0.3181, 0.3394, 0.3576, 0.3860, 0.3549, 0.2843, 0.3375,
-               0.3635, 0.3597, 0.4068, 0.3265, 0.3453],
-              [0.1224, 0.0331, 0.1392, 0.1965, 0.1660, 0.2145, 0.3302, 0.4260, 0.5503,
-               0.4859, 0.2776, 0.3724, 0.3339, 0.3459],
-              [0.2829, 0.0903, 0.3179, 0.3343, 0.3149, 0.3856, 0.5954, 0.8654, 1.0000,
-               0.9591, 0.5861, 0.4429, 0.3494, 0.3650],
-              [0.4101, 0.1648, 0.7469, 0.8419, 0.6816, 0.4950, 0.4598, 0.5734, 0.6599,
-               0.6918, 0.4082, 0.3602, 0.4526, 0.3900],
-              [0.4446, 0.1970, 0.8610, 0.9558, 0.8703, 0.5969, 0.3578, 0.3639, 0.3836,
-               0.2696, 0.2457, 0.0940, 0.2466, 0.2645],
-              [0.4661, 0.2916, 0.5460, 0.6298, 0.6865, 0.4947, 0.3344, 0.3180, 0.3113,
-               0.2919, 0.2191, 0.0688, 0.1556, 0.2535],
-              [0.2896, 0.1955, 0.2195, 0.4146, 0.4831, 0.5808, 0.5027, 0.4044, 0.3637,
-               0.4110, 0.4081, 0.2570, 0.1484, 0.2467],
-              [0.1489, 0.1317, 0.1994, 0.4677, 0.4953, 0.5647, 0.5311, 0.4122, 0.3317,
-               0.3378, 0.4336, 0.3150, 0.2032, 0.2380],
-              [0.1098, 0.1077, 0.1492, 0.3742, 0.3192, 0.3921, 0.4096, 0.3779, 0.3289,
-               0.3332, 0.3778, 0.2641, 0.1875, 0.1976],
-              [0.1065, 0.1065, 0.1437, 0.3091, 0.2134, 0.2284, 0.2599, 0.2399, 0.3141,
-               0.3549, 0.3406, 0.2375, 0.1182, 0.1587],
-              [0.0900, 0.0759, 0.1104, 0.1690, 0.1489, 0.1046, 0.1206, 0.2289, 0.3569,
-               0.4056, 0.3637, 0.2550, 0.0722, 0.1328],
-              [0.0634, 0.0381, 0.0820, 0.0876, 0.0807, 0.0729, 0.1159, 0.2247, 0.3249,
-               0.4661, 0.4900, 0.3804, 0.0775, 0.1526],
-              [0.0019, 0.0000, 0.0034, 0.0394, 0.0688, 0.0706, 0.0744, 0.0738, 0.0743,
-               0.2720, 0.2767, 0.2766, 0.1200, 0.1786],
-              [0.1545, 0.1182, 0.1631, 0.1559, 0.1374, 0.1143, 0.1377, 0.1393, 0.2544,
-               0.3703, 0.3653, 0.4016, 0.2678, 0.3975]])})
-
-
-
 ## Create a Visualisation
-To create a visualisation you first have to subclass the `Visualisation` class by just define the `__call__` method to return an image and additional informations. The following example creates a custom visualisation that just repeat the input. We first define a custom Visualisation
+To create a visualisation you first have to subclass the `Visualisation` class and override the`__call__` method to return an image and, if needed, additional informations. The following example creates a custom visualisation that just repeat the input `repeat` times. So
 
 
 ```python
@@ -149,38 +290,52 @@ class RepeatInput(Visualisation):
 
 ```
 
-This class just repeat the input for `repeat` times. Now we have to create a `WebInterface` to make this class communicate with the application. Be careful to the next step.
+This class repeats the input for `repeat` times.
+### Connect to the web interface
+To connect our fancy visualisation to the web interface, we have to create a `WebInterface`. Easily, we can use `WebInterface.from_visualisation` to generate the communication channel between our visualisation and the web app. 
+
+It follows and example
 
 
 ```python
 from mirror.visualisations.web import WebInterface
+from functools import partial
 
-class WebRepeatInput(WebInterface):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.visualisation = RepeatInput(self.module, self.device) # create your visualisation
-        self.repeat = 1 # define your parameters
-
-    @property
-    def name(self):
-        return 'Repeat'
-
-    @property
-    def params(self):
-        # maps the parameters to the UI
-        return {'repeat' : {
+params = {'repeat' : {
                      'type' : 'slider',
                      'min' : 1,
                      'max' : 100,
-                     'value' : self.repeat,
+                     'value' : 2,
                      'step': 1,
                      'params': {}
                  }
         }
 
+
+visualisation = partial(WebInterface.from_visualisation, RepeatInput, params=params, name='Repeat')
 ```
 
-In the `__init__` method we instantiate our custom visualisation by passing `self.module` and `self.device`. Then, **we decleare each argument to the visualisation as a field of this class**. So, since `RepeatInput` takes as argument `repeat` we create a field `repeat` in `WebRepeatInput`. Then, we defined the name by overriding the property `name`. Finally, we override the property `params` to create the corresponding UI. `params` must return a dictionary where **each key are the names of the visualisations arguments**, in our case `repeat`, and the value is a dictionary where there is a key `value` mapped to the class field. This will allows `mirror` to dynamically update your fields based on the UI. In this example, we create a slider and it looks like
+
+    ---------------------------------------------------------------------------
+
+    NameError                                 Traceback (most recent call last)
+
+    <ipython-input-1-274e90ff3655> in <module>
+         13 
+         14 
+    ---> 15 visualisation = partial(WebInterface.from_visualisation, RepeatInput, params=params, name='Repeat')
+    
+
+    NameError: name 'RepeatInput' is not defined
+
+
+First we import `WebInterface` and `partial`. Then, we create a dictionary where each **they key is the visualisation parameter name**. In our example, `RepeatInput` takes a parameter called `repeat`, thus we have to define a dictionary `{ 'repeat' : { ... }' }`. 
+
+The value of that dictionary is the configuration for one of the basic UI elements: *slider*, *textfield* and *radio*. 
+
+The input is stored in the `value` slot.
+
+Then we call `WebInterface.from_visualisation` by passing the visualisation, the params and the name. We need to wrap this function using `partial` since `mirror` will need to dynamically pass some others parameters, the current layer and the input, at run time.
 
 ![alt](https://github.com/FrancescoSaverioZuppichini/mirror/blob/master/resources/repeat_slider.jpg?raw=true)
 The final result is 

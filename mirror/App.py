@@ -5,12 +5,12 @@ import time
 
 from flask import Flask, request, Response, send_file, jsonify
 from torchvision.transforms import ToPILImage
-from .visualisations.web import WebWeights
+from .visualisations.web import Weights
 from .ModuleTracer import ModuleTracer
 
 
 class App(Flask):
-    default_visualisations = [WebWeights]
+    default_visualisations = [Weights]
     MAX_LINKS_EVERY_REQUEST = 64
 
     def __init__(self, inputs, model, visualisations=[]):
@@ -90,7 +90,7 @@ class App(Flask):
                                     response='Visualisation {} not supported or does not exist'.format(vis_key))
             else:
                 self.current_vis = self.name2visualisations[vis_key]
-                self.current_vis.update_params(data['params'])
+                self.current_vis.from_JSON(data['params'])
                 self.current_vis.clean_cache()
                 response = jsonify(self.current_vis.to_JSON())
 
