@@ -5,8 +5,6 @@ class WebInterface():
         self.callable = callable
         self.params = params
         self.name = name
-        self.outputs = []
-        self.cache = {}
 
     def __call__(self, input_image, layer):
         if self.callable is None: raise ValueError(
@@ -22,9 +20,6 @@ class WebInterface():
 
     def from_JSON(self, data):
         self.params = data
-
-    def clean_cache(self):
-        self.cache = {}
 
     @classmethod
     def from_visualisation(cls, visualisation, module, device, *args, **kwargs):

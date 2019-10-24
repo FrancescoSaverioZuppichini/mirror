@@ -102,7 +102,7 @@ class App(Flask):
                 layer = self.traced[id].module
                 vis_name = self.current_vis.name
 
-                if self.current_vis.name not in self.cache[vis_name]:
+                if (layer, self.current_input) not in self.cache[vis_name]:
                     self.cache[vis_name][(layer, self.current_input)] = self.current_vis(self.current_input.clone(),
                                                                                          layer)
                 else:
