@@ -25,12 +25,9 @@ class TracedNode():
         Recursively add items with not children to flat the dictionary.
         :return:
         """
-        v = {}
-        if len(self.children) <= 0:
-            v = {self.id: self}
-        else:
-            for child in self.children:
-                v = {**v, **child.__dict__()}
+        v = {self.id: self}
+        for child in self.children:
+            v = {**v, **child.__dict__()}
         return v
 
     def __call__(self, module, input, output):
@@ -45,11 +42,12 @@ class ModuleTracer():
     correct execution of an input through the model.
     """
 
-    def __init__(self, module):
+    def __init__(self, module, device):
         super().__init__()
         self.module = module
         self.handles = []
         self.root = None
+        self.device = device
 
     def trace(self, module, root=None):
         """
@@ -65,6 +63,7 @@ class ModuleTracer():
         return root
 
     def __call__(self, x):
+        x = x.to(self.device)
         self.root = self.trace(self.module, None)
         _ = self.module(x)
         self.clean()

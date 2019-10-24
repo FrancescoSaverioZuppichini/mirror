@@ -7,24 +7,27 @@ from flask import Flask, request, Response, send_file, jsonify
 from torchvision.transforms import ToPILImage
 from .visualisations.web import Weights
 from .ModuleTracer import ModuleTracer
+from .utils import device
 
 
 class App(Flask):
     default_visualisations = [Weights]
     MAX_LINKS_EVERY_REQUEST = 64
 
-    def __init__(self, inputs, model, visualisations=[]):
+    def __init__(self, inputs, model, visualisations=[], device=device):
         super().__init__(__name__)
         self.cache = {}  # internal cache used to store the results
         self.outputs = None  # holds the current output from a visualisation
         if len(inputs) <= 0: raise ValueError('At least one input is required.')
 
         self.inputs, self.model = inputs, model
-        self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+        self.device = device
         self.current_input = self.inputs[0].unsqueeze(0).to(self.device)  # add 1 dim for batch
         self.module = model.to(self.device).eval()
         self.setup_tracer()
         self.setup_visualisations(visualisations)
+        self.cache = {vis.name: {} for vis in
+                      self.visualisations}  # internal cache used to store the results of each visualization
 
         @self.route('/')
         def root():
@@ -81,19 +84,15 @@ class App(Flask):
         @self.route('/api/visualisation', methods=['PUT'])
         def api_visualisation():
             data = json.loads(request.data.decode())
-
-            vis_key = data['name']
-            visualisations_not_exist = vis_key not in self.name2visualisations
-
-            if visualisations_not_exist:
-                response = Response(status=500,
-                                    response='Visualisation {} not supported or does not exist'.format(vis_key))
-            else:
-                self.current_vis = self.name2visualisations[vis_key]
+            vis_name = data['name']
+            try:
+                self.current_vis = self.name2visualisations[vis_name]
                 self.current_vis.from_JSON(data['params'])
-                self.current_vis.clean_cache()
+                self.cache[vis_name] = {}
                 response = jsonify(self.current_vis.to_JSON())
-
+            except KeyError:
+                response = Response(status=500,
+                                    response='Visualisation {} not supported or does not exist'.format(vis_name))
             return response
 
         @self.route('/api/model/layer/output/<id>')
@@ -101,20 +100,15 @@ class App(Flask):
             try:
 
                 layer = self.traced[id].module
+                vis_name = self.current_vis.name
 
-                if self.current_input not in self.current_vis.cache: self.current_vis.cache[self.current_input] = {}
-
-                layer_cache = self.current_vis.cache[self.current_input]
-                # always clone the input to avoid being modified
-                input_clone = self.current_input.clone()
-
-                if layer not in layer_cache:
-                    layer_cache[layer] = self.current_vis(input_clone, layer)
-                    del input_clone
+                if self.current_vis.name not in self.cache[vis_name]:
+                    self.cache[vis_name][(layer, self.current_input)] = self.current_vis(self.current_input.clone(),
+                                                                                         layer)
                 else:
                     print('[INFO] cached')
 
-                self.outputs, _ = layer_cache[layer]
+                self.outputs, _ = self.cache[vis_name][(layer, self.current_input)]
 
                 if len(self.outputs.shape) < 3:  raise ValueError
 
@@ -155,7 +149,7 @@ class App(Flask):
 
     def setup_tracer(self):
         # instantiate a Tracer object and trace one input
-        self.tracer = ModuleTracer(module=self.module)
+        self.tracer = ModuleTracer(module=self.module, device=self.device)
         self.tracer(self.current_input)
         # store the traced graph as a dictionary
         self.traced = self.tracer.__dict__()

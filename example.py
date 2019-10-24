@@ -5,7 +5,7 @@ from torchvision.models import resnet101, resnet18, vgg16, alexnet
 from torchvision.transforms import ToTensor, Resize, Compose
 
 # create a model
-model = vgg16(pretrained=True)
+model = resnet18(pretrained=True)
 # open some images
 cat = Image.open("./cat.jpg")
 dog_and_cat = Image.open("./dog_and_cat.jpg")
