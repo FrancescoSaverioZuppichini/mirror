@@ -2,7 +2,7 @@ import json
 import io
 import torch
 import time
-
+import logging
 from flask import Flask, request, Response, send_file, jsonify
 from torchvision.transforms import ToPILImage
 from .visualisations.web import Weights
@@ -17,7 +17,6 @@ class App(Flask):
     def __init__(self, inputs, model, visualisations=[], device=device):
         super().__init__(__name__)
         self.cache = {}  # internal cache used to store the results
-        self.outputs = None  # holds the current output from a visualisation
         if len(inputs) <= 0: raise ValueError('At least one input is required.')
 
         self.inputs, self.model = inputs, model
@@ -28,6 +27,7 @@ class App(Flask):
         self.setup_visualisations(visualisations)
         self.cache = {vis.name: {} for vis in
                       self.visualisations}  # internal cache used to store the results of each visualization
+        self.logger.setLevel(logging.INFO)
 
         @self.route('/')
         def root():
@@ -44,13 +44,13 @@ class App(Flask):
         @self.route('/api/inputs', methods=['GET', 'PUT'])
         def api_inputs():
             if request.method == 'GET':
-                self.outputs = self.inputs
+                # self.outputs = self.inputs
 
                 response = ['/api/model/image/{}/{}/{}/{}/{}'.format(hash(None),
                                                                      hash(None),
                                                                      hash(time.time()),
                                                                      id,
-                                                                     i) for i in range(len(self.inputs))]
+                                                                     i) for i in range(len(self.outputs))]
 
                 response = jsonify({'links': response, 'next': False})
 
@@ -99,16 +99,7 @@ class App(Flask):
         def api_model_layer_output(id):
             try:
 
-                layer = self.traced[id].module
-                vis_name = self.current_vis.name
-
-                if (layer, self.current_input) not in self.cache[vis_name]:
-                    self.cache[vis_name][(layer, self.current_input)] = self.current_vis(self.current_input.clone(),
-                                                                                         layer)
-                else:
-                    print('[INFO] cached')
-
-                self.outputs, _ = self.cache[vis_name][(layer, self.current_input)]
+                self.layer = self.traced[id].module
 
                 if len(self.outputs.shape) < 3:  raise ValueError
 
@@ -146,6 +137,20 @@ class App(Flask):
                 return send_file(img_io, mimetype='image/jpeg')
             except KeyError:
                 return Response(status=500, response='Index not found.')
+
+    @property
+    def outputs(self):
+        vis_name = self.current_vis.name
+        vis_cache = self.cache[vis_name]
+        if (self.layer, self.current_input) not in vis_cache:
+            vis_cache[(self.layer, self.current_input)] = self.current_vis(self.current_input.clone(),
+                                                                                      self.layer)
+            self.logger.info('Computing Visualisation')
+        else:
+            self.logger.debug('Cached')
+
+        outputs, _ = vis_cache[(self.layer, self.current_input)]
+        return outputs
 
     def setup_tracer(self):
         # instantiate a Tracer object and trace one input
