@@ -7,7 +7,25 @@ from flask import Flask, request, Response, send_file, jsonify
 from torchvision.transforms import ToPILImage
 from .visualisations.web import Weights
 from .ModuleTracer import ModuleTracer
-from .utils import device
+from .utils import device, add_batch
+
+from functools import wraps, update_wrapper
+from datetime import datetime
+
+from flask import make_response
+
+
+def nocache(view):
+    @wraps(view)
+    def no_cache(*args, **kwargs):
+        response = make_response(view(*args, **kwargs))
+        response.headers['Last-Modified'] = datetime.now()
+        response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0, max-age=0'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '-1'
+        return response
+
+    return update_wrapper(no_cache, view)
 
 
 class App(Flask):
@@ -16,18 +34,18 @@ class App(Flask):
 
     def __init__(self, inputs, model, visualisations=[], device=device):
         super().__init__(__name__)
-        self.cache = {}  # internal cache used to store the results
         if len(inputs) <= 0: raise ValueError('At least one input is required.')
-
         self.inputs, self.model = inputs, model
         self.device = device
-        self.current_input = self.inputs[0].unsqueeze(0).to(self.device)  # add 1 dim for batch
         self.module = model.to(self.device).eval()
+        self.logger.setLevel(logging.INFO)
+        self.outputs: torch.Tensor = torch.empty(0)
+        self.input = add_batch(self.inputs[0]).to(self.device)  # add 1 dim for batch
+        self.layer = self.module
         self.setup_tracer()
         self.setup_visualisations(visualisations)
         self.cache = {vis.name: {} for vis in
                       self.visualisations}  # internal cache used to store the results of each visualization
-        self.logger.setLevel(logging.INFO)
 
         @self.route('/')
         def root():
@@ -43,24 +61,17 @@ class App(Flask):
 
         @self.route('/api/inputs', methods=['GET', 'PUT'])
         def api_inputs():
+            response = Response('404', 'Invalid Method.')
+
             if request.method == 'GET':
-                # self.outputs = self.inputs
-
-                response = ['/api/model/image/{}/{}/{}/{}/{}'.format(hash(None),
-                                                                     hash(None),
-                                                                     hash(time.time()),
-                                                                     id,
-                                                                     i) for i in range(len(self.outputs))]
-
+                self.outputs = self.inputs
+                response = [f'/api/model/image/{time.time()}/{i}' for i in range(len(self.outputs))]
                 response = jsonify({'links': response, 'next': False})
 
             elif request.method == 'PUT':
                 data = json.loads(request.data.decode())
-
                 input_index = data['id']
-
-                self.current_input = self.inputs[input_index].unsqueeze(0).to(self.device)
-
+                self.input = add_batch(self.inputs[input_index]).to(self.device)
                 response = jsonify(data)
 
             return response
@@ -77,7 +88,7 @@ class App(Flask):
             serialised = [v.to_JSON() for v in self.visualisations]
 
             response = jsonify({'visualisations': serialised,
-                                'current': self.current_vis.to_JSON()})
+                                'current': self.visualization.to_JSON()})
 
             return response
 
@@ -86,10 +97,10 @@ class App(Flask):
             data = json.loads(request.data.decode())
             vis_name = data['name']
             try:
-                self.current_vis = self.name2visualisations[vis_name]
-                self.current_vis.from_JSON(data['params'])
+                self.visualization = self.name2visualisations[vis_name]
+                self.visualization.from_JSON(data['params'])
                 self.cache[vis_name] = {}
-                response = jsonify(self.current_vis.to_JSON())
+                response = jsonify(self.visualization.to_JSON())
             except KeyError:
                 response = Response(status=500,
                                     response='Visualisation {} not supported or does not exist'.format(vis_name))
@@ -98,22 +109,15 @@ class App(Flask):
         @self.route('/api/model/layer/output/<id>')
         def api_model_layer_output(id):
             try:
-
                 self.layer = self.traced[id].module
+                self.outputs = self.get_outputs()
+                if len(self.outputs.shape) < 3: raise ValueError('Outputs must be a 3-D tensor.')
 
-                if len(self.outputs.shape) < 3:  raise ValueError
-
-                last = int(request.args['last'])
-                max = min((last + self.MAX_LINKS_EVERY_REQUEST), self.outputs.shape[0])
-
-                response = ['/api/model/image/{}/{}/{}/{}/{}'.format(hash(self.current_input),
-                                                                     hash(self.current_vis),
-                                                                     hash(time.time()),
-                                                                     id,
-                                                                     i) for i in range(last, max)]
-
-                response = jsonify({'links': response, 'next': last + 1 < max})
-
+                lower = int(request.args['last'])
+                upper = min((lower + self.MAX_LINKS_EVERY_REQUEST), self.outputs.shape[0])
+                # adding time to prevent the browser from caching the link
+                response = [f'/api/model/image/{time.time()}/{i}' for i in range(lower, upper)]
+                response = jsonify({'links': response, 'next': lower + 1 < upper})
 
             except KeyError:
                 response = Response(status=500, response='Index not found.')
@@ -124,38 +128,40 @@ class App(Flask):
 
             return response
 
-        @self.route('/api/model/image/<input_id>/<vis_id>/<layer_id>/<time>/<output_id>')
-        def api_model_layer_output_image(input_id, vis_id, layer_id, time, output_id):
+        @self.route('/api/model/image/<time>/<output_id>')
+        def api_model_layer_output_image(time, output_id):
             output_id = int(output_id)
             try:
-                output = self.outputs[output_id]
-                output = output.detach().cpu()
-                pil_img = ToPILImage()(output)
-                img_io = io.BytesIO()
-                pil_img.save(img_io, 'JPEG', quality=70)
-                img_io.seek(0)
-                return send_file(img_io, mimetype='image/jpeg')
+                image = self.make_image(output_id)
+                return send_file(image, mimetype='image/jpeg')
             except KeyError:
                 return Response(status=500, response='Index not found.')
 
-    @property
-    def outputs(self):
-        vis_name = self.current_vis.name
+    def make_image(self, output_id):
+        output = self.outputs[output_id].detach().cpu()
+        pil_img = ToPILImage()(output)
+        img_io = io.BytesIO()
+        pil_img.save(img_io, 'JPEG', quality=70)
+        img_io.seek(0)
+        return img_io
+
+    def get_outputs(self):
+        vis_name = self.visualization.name
         vis_cache = self.cache[vis_name]
-        if (self.layer, self.current_input) not in vis_cache:
-            vis_cache[(self.layer, self.current_input)] = self.current_vis(self.current_input.clone(),
-                                                                                      self.layer)
+        if (self.layer, self.input) not in vis_cache:
+            vis_cache[(self.layer, self.input)] = self.visualization(self.input.clone(),
+                                                                                   self.layer)
             self.logger.info('Computing Visualisation')
         else:
             self.logger.debug('Cached')
 
-        outputs, _ = vis_cache[(self.layer, self.current_input)]
+        outputs, _ = vis_cache[(self.layer, self.input)]
         return outputs
 
     def setup_tracer(self):
         # instantiate a Tracer object and trace one input
         self.tracer = ModuleTracer(module=self.module, device=self.device)
-        self.tracer(self.current_input)
+        self.tracer(self.input)
         # store the traced graph as a dictionary
         self.traced = self.tracer.__dict__()
 
@@ -163,4 +169,4 @@ class App(Flask):
         visualisations = [*self.default_visualisations, *visualisations]
         self.visualisations = [v(self.module, self.device) for v in visualisations]
         self.name2visualisations = {v.name: v for v in self.visualisations}
-        self.current_vis = self.visualisations[0]
+        self.visualization = self.visualisations[0]
