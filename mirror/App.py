@@ -97,8 +97,7 @@ class App(Flask):
             data = json.loads(request.data.decode())
             vis_name = data['name']
             try:
-                self.visualization = self.name2visualisations[vis_name]
-                self.visualization.from_JSON(data['params'])
+                self.visualization = self.name2visualisations[vis_name].update(data['params'])
                 self.cache[vis_name] = {}
                 response = jsonify(self.visualization.to_JSON())
             except KeyError:
