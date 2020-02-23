@@ -16,18 +16,16 @@ class DeepDream(Visualisation):
         if self.handle: self.handle.remove()
 
         def hook(module, input, output):
-            if module == self.layer:
-                self.layer_output = output
+            self.layer_output = output
+            self.optimizer.zero_grad()
+            loss = - torch.norm(self.layer_output)
+            loss.backward()
+            self.optimizer.step()
 
-                self.optimizer.zero_grad()
-                loss = - torch.norm(self.layer_output)
-                loss.backward()
-                self.optimizer.step()
-
-                raise Exception('Layer found!')
 
         return self.layer.register_forward_hook(hook)
 
+    
     def step(self, image, steps=5, save=False):
 
         self.module.zero_grad()
@@ -37,17 +35,12 @@ class DeepDream(Visualisation):
         self.optimizer = torch.optim.Adam([self.image_var], lr=self.lr)
 
         for i in range(steps):
-            try:
-                self.module(self.image_var)
-            except:
-                pass
+            self.module(self.image_var)
 
         dreamed = self.image_var.data.squeeze(0)
         c, w, h = dreamed.shape
 
-        # dreamed = dreamed.view((w, h, c))
         dreamed = image_net_postprocessing(dreamed.cpu()).to(self.device)
-        # dreamed = dreamed * self.std + self.mean
         dreamed = torch.clamp(dreamed, 0.0, 1.0)
         # dreamed = dreamed.view((c, w, h))
 
