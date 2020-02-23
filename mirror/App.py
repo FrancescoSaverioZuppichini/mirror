@@ -79,6 +79,15 @@ class App(Flask):
 
         @self.route('/api/model/layer/<id>')
         def api_model_layer(id):
+            """
+            This endpoint returns the name of a specific layer.
+
+            
+            :param id: The id of a lyer
+            :type id: int
+            :return: The name of the layer
+            :rtype: Response
+            """
             id = int(id)
             name = self.module_helper[id].name
 
@@ -90,7 +99,7 @@ class App(Flask):
             This endpoint returns a list of visualisations. They are serialised (converted to JSON).
             
             :return: A HTTP response containing the serialised list of visualisations
-            :rtype: [type]
+            :rtype: Response
             """
             serialised = [v.to_JSON() for v in self.visualisations]
             response = jsonify({'visualisations': serialised,
@@ -104,7 +113,7 @@ class App(Flask):
             This endpoint set the params to the a visualisation.
             
             :return: A HTTP response containing the serialized updated visualization.
-            :rtype: [type]
+            :rtype: Response
             """
             data = json.loads(request.data.decode())
             vis_name = data['name']
