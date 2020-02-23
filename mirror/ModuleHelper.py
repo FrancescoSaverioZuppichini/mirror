@@ -41,8 +41,8 @@ class ModuleHelper():
     def __init__(self, module, device):
         super().__init__()
         self.module = module
-        self.handles = []
         self.root = LayerNode(parent=None)
+        self.name2layers = {}
         self.device = device
 
     def trace(self, module, root=None):
